@@ -16,6 +16,8 @@ const INTERNAL_THEME_ORDER = [
   'ui-ubuntu',
   'ui-taiga',
   'ui-darkside',
+  'ui-clean-dark',
+  'ui-clean',
   DARK_THEME_NAME,
   LIGHT_THEME_NAME,
   AUTOMATIC_THEME_NAME,

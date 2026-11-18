@@ -1,0 +1,17 @@
+{
+  "name": "ui-clean-dark",
+  "displayName": "Clean Dark",
+  "theme": "ui",
+  "preferredLayoutMode": "list",
+  "preferredHiddenLocations": [
+    "MessageListSidebar"
+  ],
+  "preferredFoldersBesideMessage": true,
+  "version": "0.1.0",
+  "description": "The dark version of Clean. Pair it with Clean under Automatic to follow the system appearance.",
+  "license": "GPL-3.0",
+  "engines": {
+    "mailspring": "*"
+  },
+  "private": true
+}

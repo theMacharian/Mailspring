@@ -102,6 +102,9 @@ class SendLaterButton extends Component<SendLaterButtonProps, SendLaterButtonSta
 
     if (AppEnv.isComposerWindow()) {
       AppEnv.close();
+    } else {
+      // A scheduled draft is done with, like a sent one; no-op unless it's in a floating panel.
+      Actions.closeFloatingComposer(this.props.draft.headerMessageId);
     }
   };
 

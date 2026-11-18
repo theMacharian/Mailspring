@@ -1,0 +1,124 @@
+// Clean Dark. Shares its component styles with Clean (ui-clean/styles/shared); this file
+// supplies the dark values those styles read. Like Clean, the tints are mixed from
+// @clean-accent at compile time.
+@import 'base/ui-variables';
+
+@clean-accent: #0b57d0;
+
+@clean-window: mix(@clean-accent, #111316, 7%);
+@clean-surface: #1b1c1f;
+@clean-elevated: #26282b;
+@clean-text: #e3e3e3;
+@clean-text-2: #c4c7c5;
+@clean-text-3: #9aa0a6;
+@clean-line: fade(#ffffff, 8%);
+@clean-outline: #5f6368;
+@clean-hover: fade(#e8eaed, 8%);
+@clean-press: fade(#e8eaed, 14%);
+@clean-row-read: #1b1c1f;
+@clean-row-unread: mix(@clean-accent, #24262a, 7%);
+@clean-row-selected: mix(@clean-accent, #1b1c1f, 30%);
+@clean-nav-active: mix(@clean-accent, #1b1c1f, 40%);
+@clean-compose: mix(@clean-accent, #1b1c1f, 50%);
+@clean-search: mix(@clean-accent, #25272b, 10%);
+@clean-accent-ink: mix(@clean-accent, #ffffff, 45%);
+@clean-on-accent: #0d1117;
+@clean-star: #fdd663;
+@clean-danger: #f28b82;
+@clean-on-danger: #1f1f1f;
+@clean-warn: #fbbc6a;
+@clean-composer-head: #2c2e32;
+@clean-avatar-bg-lightness: 30%;
+@clean-avatar-ink-lightness: 85%;
+@clean-shadow-1: 0 1px 2px rgba(0, 0, 0, 0.5), 0 1px 3px 1px rgba(0, 0, 0, 0.3);
+@clean-shadow-2: 0 1px 2px rgba(0, 0, 0, 0.5), 0 2px 6px 2px rgba(0, 0, 0, 0.3);
+@clean-shadow-3: 0 1px 3px rgba(0, 0, 0, 0.5), 0 4px 8px 3px rgba(0, 0, 0, 0.35);
+@clean-row-hover-shadow: inset 1px 0 0 rgba(255, 255, 255, 0.1), inset -1px 0 0 rgba(255, 255, 255, 0.1),
+  0 1px 3px rgba(0, 0, 0, 0.6);
+@clean-snack-bg: #e3e3e3;
+@clean-snack-text: #1f1f1f;
+@clean-snack-action: @clean-accent;
+@clean-radius-panel: 14px;
+@clean-radius-pill: 14px;
+
+// ---- Base variables --------------------------------------------------------------------
+// The base greyscale runs dark-to-light; flip it as the Dark theme does, since core styles
+// use @white, @black and the greys directly.
+@gray-base: #ffffff;
+@gray-darker: darken(@gray-base, 13.5%);
+@gray-dark: darken(@gray-base, 20%);
+@gray: darken(@gray-base, 33.5%);
+@gray-light: darken(@gray-base, 46.7%);
+@gray-lighter: darken(@gray-base, 92.5%);
+@white: #0a0a0a;
+
+@accent-primary: @clean-accent-ink;
+@accent-primary-dark: darken(@clean-accent-ink, 8%);
+@component-active-color: @clean-accent-ink;
+@component-active-bg: @clean-text;
+
+@background-primary: @clean-surface;
+@background-off-primary: @clean-surface;
+@background-secondary: @clean-window;
+@background-tertiary: #6d7987;
+
+@border-color-primary: @clean-line;
+@border-color-secondary: lighten(@clean-window, 8%);
+@border-color-tertiary: lighten(@background-tertiary, 10%);
+@border-color-divider: @clean-line;
+
+@text-color: @clean-text;
+@text-color-subtle: @clean-text-2;
+@text-color-very-subtle: @clean-text-3;
+@text-color-inverse: #ffffff;
+@text-color-inverse-subtle: fadeout(@text-color-inverse, 20%);
+@text-color-inverse-very-subtle: fadeout(@text-color-inverse, 50%);
+@text-color-heading: @clean-text;
+@text-color-link: @clean-accent-ink;
+@text-color-link-hover: lighten(@clean-accent-ink, 8%);
+@text-color-link-active: lighten(@clean-accent-ink, 8%);
+
+@font-family-sans-serif: 'Figtree', -apple-system, 'Segoe UI', 'Helvetica Neue', Helvetica, sans-serif;
+@font-family-heading: @font-family-sans-serif;
+
+@border-radius-base: 6px;
+@border-radius-large: 10px;
+@border-radius-small: 4px;
+@component-border-radius: 6px;
+
+@standard-shadow-color: rgba(0, 0, 0, 0.4);
+@standard-shadow: @clean-shadow-1;
+@background-gradient: none;
+
+@btn-default-bg-color: @clean-elevated;
+@btn-default-text-color: @clean-text-2;
+@btn-border-color: fadeout(@clean-text, 75%);
+@btn-icon-color: @clean-text-2;
+@btn-emphasis-bg-color: @clean-accent-ink;
+@btn-emphasis-text-color: @clean-on-accent;
+
+@dropdown-default-bg-color: @clean-elevated;
+@dropdown-default-text-color: @clean-text;
+@input-bg: #26282b;
+@input-border-color: @clean-outline;
+
+@toolbar-background-color: @clean-window;
+@toolbar-height-darwin: 56px;
+@panel-background-color: @clean-window;
+@source-list-bg: @clean-window;
+@source-list-active-bg: @clean-nav-active;
+@source-list-active-color: @clean-text;
+
+@list-bg: @clean-surface;
+@list-border: @clean-line;
+@list-hover-bg: lighten(@clean-surface, 3%);
+@list-focused-color: @clean-text;
+@list-focused-bg: @clean-row-selected;
+@list-focused-border: @clean-row-selected;
+@list-selected-color: @clean-text;
+@list-selected-bg: @clean-row-selected;
+@list-selected-border: mix(@clean-accent, #1b1c1f, 45%);
+
+@menu-item-color-hover: @clean-hover;
+@menu-item-color-selected: @clean-nav-active;
+@menu-text-color-selected: @clean-text;

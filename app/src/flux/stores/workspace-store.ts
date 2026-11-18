@@ -108,8 +108,47 @@ class WorkspaceStore extends MailspringStore {
     if (AppEnv.isMainWindow()) {
       this._rebuildShortcuts();
       this.listen(() => AppEnv.menu.setSectionMenu(this.rootSheet().menu || null));
+      AppEnv.config.onDidChange('core.workspace.foldersBesideMessage', () => {
+        // Updated in place: the sheet stack holds this sheet object while a message is open.
+        Sheet.Thread.columns.list = this._threadListModeColumns().map((c) =>
+          this.defineLocation(c)
+        );
+        this.trigger(this);
+      });
+      for (const key of [
+        'core.theme',
+        'core.appearance.lightThemeName',
+        'core.appearance.darkThemeName',
+      ]) {
+        AppEnv.config.onDidChange(key, this._onThemeChosen);
+      }
     }
   }
+
+  _threadListModeColumns() {
+    return AppEnv.config.get('core.workspace.foldersBesideMessage')
+      ? ['RootSidebar', 'MessageList', 'MessageListSidebar']
+      : ['MessageList', 'MessageListSidebar'];
+  }
+
+  // Some themes are designed around one layout (Clean is a single-panel inbox). Switch to it
+  // when the user picks such a theme, but only then: the system flipping between light and
+  // dark themes isn't a choice, and must not undo a layout the user picked afterwards.
+  _onThemeChosen = () => {
+    // The ThemeManager resolves the new active theme from the same config change.
+    setTimeout(() => {
+      const theme = AppEnv.themes.getActiveTheme();
+      if (!theme) return;
+      if (theme.preferredLayoutMode) this._onSelectLayoutMode(theme.preferredLayoutMode);
+      if (theme.preferredFoldersBesideMessage) {
+        AppEnv.config.set('core.workspace.foldersBesideMessage', true);
+      }
+      for (const id of theme.preferredHiddenLocations || []) {
+        const location = this.Location[id];
+        if (location && !this.isLocationHidden(location)) this._onToggleLocationHidden(location);
+      }
+    }, 0);
+  };
 
   triggerDebounced = _.debounce(() => this.trigger(this), 1);
 
@@ -131,7 +170,7 @@ class WorkspaceStore extends MailspringStore {
           splitVertical: ['RootSidebar', 'ThreadList', 'MessageListSidebar'],
         }
       );
-      this.defineSheet('Thread', {}, { list: ['MessageList', 'MessageListSidebar'] });
+      this.defineSheet('Thread', {}, { list: this._threadListModeColumns() });
     } else {
       this.defineSheet('Global');
     }

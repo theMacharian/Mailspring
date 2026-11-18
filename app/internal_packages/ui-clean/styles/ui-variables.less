@@ -1,0 +1,106 @@
+// Clean (light). Every tint is mixed at compile time from @clean-accent, so changing
+// that one value re-colours the whole theme. The accent is deliberately not tied to the
+// macOS system accent: the tints need a concrete colour to mix from.
+@import 'base/ui-variables';
+
+@clean-accent: #0b57d0;
+
+@clean-window: mix(@clean-accent, #f7f8fa, 5%);
+@clean-surface: #ffffff;
+@clean-elevated: #ffffff;
+@clean-text: #1f1f1f;
+@clean-text-2: #444746;
+@clean-text-3: #5f6368;
+@clean-line: fade(#64798f, 18%);
+@clean-outline: #c4c7c5;
+@clean-hover: fade(#444746, 8%);
+@clean-press: fade(#444746, 14%);
+@clean-row-read: mix(@clean-accent, #ffffff, 4%);
+@clean-row-unread: #ffffff;
+@clean-row-selected: mix(@clean-accent, #ffffff, 15%);
+@clean-nav-active: mix(@clean-accent, #ffffff, 20%);
+@clean-compose: mix(@clean-accent, #ffffff, 24%);
+@clean-search: mix(@clean-accent, #eef0f3, 8%);
+@clean-accent-ink: @clean-accent;
+@clean-on-accent: #ffffff;
+@clean-star: #e8a317;
+@clean-danger: #c5221f;
+@clean-on-danger: #ffffff;
+@clean-warn: #b06000;
+@clean-composer-head: mix(@clean-accent, #f3f5f8, 7%);
+@clean-avatar-bg-lightness: 88%;
+@clean-avatar-ink-lightness: 30%;
+@clean-shadow-1: 0 1px 2px rgba(60, 64, 67, 0.3), 0 1px 3px 1px rgba(60, 64, 67, 0.15);
+@clean-shadow-2: 0 1px 2px rgba(60, 64, 67, 0.3), 0 2px 6px 2px rgba(60, 64, 67, 0.15);
+@clean-shadow-3: 0 1px 3px rgba(60, 64, 67, 0.3), 0 4px 8px 3px rgba(60, 64, 67, 0.15);
+@clean-row-hover-shadow: inset 1px 0 0 #dadce0, inset -1px 0 0 #dadce0,
+  0 1px 2px rgba(60, 64, 67, 0.3), 0 1px 3px 1px rgba(60, 64, 67, 0.15);
+@clean-snack-bg: #2f3133;
+@clean-snack-text: #f1f3f4;
+@clean-snack-action: mix(@clean-accent, #ffffff, 40%);
+@clean-radius-panel: 14px;
+@clean-radius-pill: 14px;
+
+// ---- Base variables --------------------------------------------------------------------
+@accent-primary: @clean-accent;
+@accent-primary-dark: darken(@clean-accent, 6%);
+@component-active-color: @clean-accent;
+
+@background-primary: @clean-surface;
+@background-off-primary: @clean-surface;
+@background-secondary: @clean-window;
+
+@border-color-primary: @clean-line;
+@border-color-secondary: darken(@clean-window, 6%);
+@border-color-divider: @clean-line;
+
+@text-color: @clean-text;
+@text-color-subtle: @clean-text-2;
+@text-color-very-subtle: @clean-text-3;
+@text-color-heading: @clean-text;
+@text-color-link: @clean-accent;
+@text-color-link-hover: darken(@clean-accent, 8%);
+@text-color-link-active: darken(@clean-accent, 8%);
+
+@font-family-sans-serif: 'Figtree', -apple-system, 'Segoe UI', 'Helvetica Neue', Helvetica, sans-serif;
+@font-family-heading: @font-family-sans-serif;
+
+@border-radius-base: 6px;
+@border-radius-large: 10px;
+@border-radius-small: 4px;
+@component-border-radius: 6px;
+
+@standard-shadow-color: rgba(60, 64, 67, 0.15);
+@standard-shadow: @clean-shadow-1;
+@background-gradient: none;
+
+@btn-default-bg-color: @clean-surface;
+@btn-default-text-color: @clean-text-2;
+@btn-icon-color: @clean-text-2;
+@btn-emphasis-bg-color: @clean-accent;
+@btn-emphasis-text-color: @clean-on-accent;
+
+@dropdown-default-bg-color: @clean-elevated;
+@input-bg: @clean-surface;
+@input-border-color: #dadce0;
+
+@toolbar-background-color: @clean-window;
+@toolbar-height-darwin: 56px;
+@panel-background-color: @clean-window;
+@source-list-bg: @clean-window;
+@source-list-active-bg: @clean-nav-active;
+@source-list-active-color: @clean-text;
+
+@list-bg: @clean-surface;
+@list-border: @clean-line;
+@list-hover-bg: @clean-row-read;
+@list-focused-color: @clean-text;
+@list-focused-bg: @clean-row-selected;
+@list-focused-border: @clean-row-selected;
+@list-selected-color: @clean-text;
+@list-selected-bg: @clean-row-selected;
+@list-selected-border: mix(@clean-accent, #ffffff, 30%);
+
+@menu-item-color-hover: @clean-hover;
+@menu-item-color-selected: @clean-nav-active;
+@menu-text-color-selected: @clean-text;

@@ -1,0 +1,11 @@
+// Email bodies render in their own frame, which only receives rules from stylesheets
+// whose file name contains "email-frame.less" (EmailFrameStylesStore), so the font has
+// to be declared again here.
+.ignore-in-parent-frame {
+  @import 'fonts';
+
+  #inbox-html-wrapper,
+  #inbox-plain-wrapper {
+    font-family: 'Figtree', -apple-system, 'Segoe UI', 'Helvetica Neue', Helvetica, sans-serif;
+  }
+}

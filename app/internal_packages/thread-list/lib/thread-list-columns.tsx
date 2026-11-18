@@ -10,7 +10,11 @@ import {
 
 import { localized, FocusedPerspectiveStore, Utils, DateUtils, Thread } from 'mailspring-exports';
 
-import { ThreadArchiveQuickAction, ThreadTrashQuickAction } from './thread-list-quick-actions';
+import {
+  ThreadArchiveQuickAction,
+  ThreadTrashQuickAction,
+  ThreadToggleUnreadQuickAction,
+} from './thread-list-quick-actions';
 import ThreadListParticipants from './thread-list-participants';
 import ThreadListIcon from './thread-list-icon';
 import { ThreadWithMessagesMetadata } from './types';
@@ -50,16 +54,64 @@ const subject = function (subj: string) {
   }
 };
 
+// Marketing mail pads its preview text with invisible characters (combining grapheme
+// joiners, zero-width joiners, soft hyphens) to push the rest of the body out of inbox
+// previews. Left in, they render as a long blank run ending in an ellipsis.
+const INVISIBLE_PADDING = /(?:\u00AD|\u034F|[\u200B-\u200F]|\u2060|\uFEFF)+/g;
+
+export const cleanSnippet = (snippet: string | null) =>
+  snippet ? snippet.replace(INVISIBLE_PADDING, '').replace(/\s+/g, ' ').trim() : snippet;
+
 const getSnippet = function (thread: ThreadWithMessagesMetadata) {
   const messages = thread.__messages || [];
   if (messages.length === 0) {
-    return thread.snippet;
+    return cleanSnippet(thread.snippet);
   }
   for (let ii = messages.length - 1; ii >= 0; ii--) {
-    if (messages[ii].snippet) return messages[ii].snippet;
+    if (messages[ii].snippet) return cleanSnippet(messages[ii].snippet);
   }
   return null;
 };
+
+const ATTACHMENT_KIND: { [ext: string]: string } = {
+  pdf: 'pdf',
+  png: 'image',
+  jpg: 'image',
+  jpeg: 'image',
+  gif: 'image',
+  webp: 'image',
+  heic: 'image',
+  doc: 'doc',
+  docx: 'doc',
+  xls: 'sheet',
+  xlsx: 'sheet',
+  csv: 'sheet',
+};
+
+/**
+ * The first attachment's name as a chip, with a count of the rest. Rows have one fixed
+ * height, so the chip sits at the end of the line rather than under the subject. Hidden by
+ * default, where the paperclip icon serves; themes that want chips (Clean) swap them.
+ */
+function ThreadAttachmentChip({
+  messages,
+}: {
+  messages: ThreadWithMessagesMetadata['__messages'];
+}) {
+  const files = messages
+    .flatMap((m) => m.files || [])
+    .filter((f) => !f.contentId || f.size > 12 * 1024);
+  if (!files.length) return null;
+  const name = files[0].displayName();
+  const ext = (name.split('.').pop() || '').toLowerCase();
+  return (
+    <span className="thread-attachment-chip" title={files.map((f) => f.displayName()).join(', ')}>
+      <span className={`kind kind-${ATTACHMENT_KIND[ext] || 'file'}`} />
+      <span className="name">{name}</span>
+      {files.length > 1 && <span className="more">+{files.length - 1}</span>}
+    </span>
+  );
+}
 
 const c1 = new ListTabular.Column({
   name: '★',
@@ -128,6 +180,7 @@ const c3 = new ListTabular.Column({
           {getSnippet(thread)}
         </span>
         {attachment}
+        {hasAttachments && <ThreadAttachmentChip messages={messages} />}
       </span>
     );
   },
@@ -159,6 +212,10 @@ const c5 = new ListTabular.Column({
           children={[
             <ThreadTrashQuickAction key="thread-trash-quick-action" thread={thread} />,
             <ThreadArchiveQuickAction key="thread-archive-quick-action" thread={thread} />,
+            <ThreadToggleUnreadQuickAction
+              key="thread-toggle-unread-quick-action"
+              thread={thread}
+            />,
           ]}
           matching={{ role: 'ThreadListQuickAction' }}
           className="thread-injected-quick-actions"

@@ -1,0 +1,17 @@
+{
+  "name": "ui-clean",
+  "displayName": "Clean",
+  "theme": "ui",
+  "preferredLayoutMode": "list",
+  "preferredHiddenLocations": [
+    "MessageListSidebar"
+  ],
+  "preferredFoldersBesideMessage": true,
+  "version": "0.1.0",
+  "description": "A calm, compact theme with pill navigation, rounded panels and the Figtree typeface.",
+  "license": "GPL-3.0",
+  "engines": {
+    "mailspring": "*"
+  },
+  "private": true
+}

@@ -1,0 +1,20 @@
+@import 'ui-variables';
+@import '../../ui-clean/styles/shared/components';
+
+// Image-based icons are drawn dark for light backgrounds; invert them as the Dark theme does.
+.thread-icon:not(.thread-icon-unread):not(.thread-icon-star) {
+  filter: invert(100%);
+}
+img.content-dark,
+img.content-light {
+  filter: invert(100%);
+}
+.mail-label {
+  filter: contrast(110%) brightness(85%);
+}
+.thread-list .list-item.focused,
+.thread-list .list-item.selected {
+  .thread-icon:not(.thread-icon-unread):not(.thread-icon-star) {
+    filter: invert(100%);
+  }
+}

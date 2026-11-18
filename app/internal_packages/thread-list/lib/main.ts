@@ -4,6 +4,7 @@ import ThreadList from './thread-list';
 import ThreadListToolbar from './thread-list-toolbar';
 import ThreadListVertical from './thread-list-vertical';
 import ThreadListEmptyFolderBar from './thread-list-empty-folder-bar';
+import ThreadListHeaderBar from './thread-list-header-bar';
 import MessageListToolbar from './message-list-toolbar';
 import SelectedItemsStack from './selected-items-stack';
 import * as ThreadPermalinkHandler from './thread-permalink-handler';
@@ -12,6 +13,10 @@ import { UpButton, DownButton, MoveButtons, FlagButtons } from './thread-toolbar
 
 export function activate() {
   ThreadPermalinkHandler.activate();
+
+  ComponentRegistry.register(ThreadListHeaderBar, {
+    location: WorkspaceStore.Location.ThreadList,
+  });
 
   ComponentRegistry.register(ThreadListEmptyFolderBar, {
     location: WorkspaceStore.Location.ThreadList,
@@ -64,6 +69,7 @@ export function activate() {
 
 export function deactivate() {
   ComponentRegistry.unregister(ThreadList);
+  ComponentRegistry.unregister(ThreadListHeaderBar);
   ComponentRegistry.unregister(SelectedItemsStack);
   ComponentRegistry.unregister(ThreadListToolbar);
   ComponentRegistry.unregister(MessageListToolbar);

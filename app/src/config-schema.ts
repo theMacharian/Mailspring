@@ -42,6 +42,11 @@ export default {
             default: 'list',
             enum: ['split', 'list', 'splitVertical'],
           },
+          foldersBesideMessage: {
+            type: 'boolean',
+            default: false,
+            title: localized('Keep the folder list beside an open message (single panel layout)'),
+          },
           systemTray: {
             type: 'boolean',
             default: true,
@@ -194,6 +199,11 @@ export default {
               'Many features are unavailable in plain-text mode. To create a single ' +
                 'plain-text draft, hold Alt or Option while clicking Compose or Reply.'
             ),
+          },
+          floatingComposer: {
+            type: 'boolean',
+            default: true,
+            title: localized('Open new messages in a panel inside the main window'),
           },
           spellcheck: {
             type: 'boolean',

@@ -26,6 +26,14 @@ export default class Package {
   public displayName: string;
   public syncInit: boolean;
   public windowTypes: { [windowName: string]: boolean };
+  // Themes only: the layout ('list', 'split' or 'splitVertical') the theme is designed around,
+  // applied when the user picks the theme. See WorkspaceStore._onThemeChosen.
+  public preferredLayoutMode: string | null;
+  // Themes only: workspace locations (e.g. 'MessageListSidebar') the theme's design leaves out,
+  // hidden when the user picks the theme. The user can show them again as usual.
+  public preferredHiddenLocations: string[];
+  // Themes only: keep the folder list beside an open message in the single panel layout.
+  public preferredFoldersBesideMessage: boolean;
   private json: any;
 
   constructor(dir: string) {
@@ -51,6 +59,9 @@ export default class Package {
     this.displayName = this.json.displayName || this.json.name;
     this.syncInit = this.json.syncInit;
     this.windowTypes = this.json.windowTypes || { default: true };
+    this.preferredLayoutMode = this.json.preferredLayoutMode || null;
+    this.preferredHiddenLocations = this.json.preferredHiddenLocations || [];
+    this.preferredFoldersBesideMessage = !!this.json.preferredFoldersBesideMessage;
   }
 
   activate() {

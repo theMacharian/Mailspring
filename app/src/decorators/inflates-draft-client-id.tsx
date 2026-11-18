@@ -4,13 +4,18 @@ import * as Actions from '../flux/actions';
 import * as Utils from '../flux/models/utils';
 import { Message, DraftEditingSession } from 'mailspring-exports';
 
-function InflatesDraftClientId(
-  ComposedComponent
-): React.ComponentType<
-  { headerMessageId: string; onDraftReady: () => void } & React.HTMLProps<HTMLElement>
-> {
+type InflatesDraftClientIdProps = {
+  headerMessageId: string;
+  onDraftReady: () => void;
+  // Asked on unmount. Returning true keeps a draft that was never edited, for hosts that
+  // hand the draft to another view (a floating composer popped out to a window) rather
+  // than abandoning it.
+  keepEmptyDraftOnUnmount?: () => boolean;
+} & React.HTMLProps<HTMLElement>;
+
+function InflatesDraftClientId(ComposedComponent): React.ComponentType<InflatesDraftClientIdProps> {
   return class extends React.Component<
-    { headerMessageId: string; onDraftReady: () => void } & React.HTMLProps<HTMLElement>,
+    InflatesDraftClientIdProps,
     { draft: Message; session: DraftEditingSession; _lastHeaderMessageId: string }
   > {
     static displayName = ComposedComponent.displayName;
@@ -57,7 +62,9 @@ function InflatesDraftClientId(
     componentWillUnmount() {
       this._mounted = false;
       this._teardownForDraft();
-      this._deleteDraftIfEmpty();
+      if (!(this.props.keepEmptyDraftOnUnmount && this.props.keepEmptyDraftOnUnmount())) {
+        this._deleteDraftIfEmpty();
+      }
     }
 
     componentDidUpdate(prevProps: { headerMessageId: string; onDraftReady: () => void }) {

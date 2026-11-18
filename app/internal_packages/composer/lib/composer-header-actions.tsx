@@ -12,7 +12,7 @@ export default class ComposerHeaderActions extends React.Component<ComposerHeade
   static displayName = 'ComposerHeaderActions';
 
   _onPopoutComposer = () => {
-    Actions.composePopoutDraft(this.props.headerMessageId);
+    Actions.composePopoutDraft(this.props.headerMessageId, { inWindow: true });
   };
 
   _onKeyDown = (handler: () => void) => (e: React.KeyboardEvent) => {

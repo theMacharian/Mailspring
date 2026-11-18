@@ -1,0 +1,1142 @@
+// Component styles shared by Clean and Clean Dark. Each theme imports its own
+// ui-variables before this file, which is why it doesn't import them itself: an import
+// here would resolve to Clean's light variables even when Clean Dark is active.
+// Files in this folder aren't loaded on their own; the theme loader only reads the
+// top level of styles/.
+
+@import 'fonts';
+
+body {
+  -webkit-font-smoothing: antialiased;
+}
+
+// ---- Window chrome -----------------------------------------------------------------------
+.sheet-container,
+.sheet {
+  background-color: @clean-window;
+}
+
+body .sheet-toolbar-container,
+body.is-blurred .sheet-toolbar-container,
+body.platform-darwin.is-blurred .sheet-toolbar-container {
+  background: @clean-window !important;
+  background-image: none !important;
+}
+
+body .sheet-toolbar {
+  border-bottom: 0 !important;
+  box-shadow: none !important;
+}
+
+body .sheet-toolbar .btn.btn-toolbar {
+  height: 32px;
+  min-width: 32px;
+  border-radius: 16px;
+  background: transparent;
+  box-shadow: none;
+  img.content-mask {
+    background-color: @clean-text-2;
+  }
+  &:hover {
+    background: @clean-hover;
+  }
+  &:active,
+  &.selected {
+    background: @clean-press;
+  }
+}
+
+// The base styles outline every toolbar button while the window is in the background;
+// the design keeps them plain either way.
+body.is-blurred .sheet-toolbar-container .btn.btn-toolbar {
+  box-shadow: none !important;
+}
+
+// Toolbar actions read as separate round icon buttons rather than outlined segmented
+// groups. !important because the base group rules square off and divide the buttons
+// with :not(:first-child) selectors that outrank these.
+body .sheet-toolbar .button-group {
+  gap: 2px;
+  background: transparent;
+  border-radius: 0;
+  box-shadow: none !important;
+  .btn.btn-toolbar {
+    min-width: 34px;
+    width: 34px;
+    padding: 0;
+    border: 0 !important;
+    border-radius: 16px !important;
+  }
+}
+
+// The toolbar can't hold a labelled Compose button the way the sidebar could, so it's a
+// tinted rounded square, the same tone as the Compose button in the design.
+body .sheet-toolbar .btn.btn-toolbar.item-compose {
+  height: 34px;
+  min-width: 42px;
+  border-radius: 12px;
+  background: @clean-compose;
+  img.content-mask {
+    background-color: @clean-text;
+  }
+  &:hover {
+    box-shadow: @clean-shadow-1;
+  }
+}
+
+// ---- Search ----------------------------------------------------------------------------
+body .thread-search-bar {
+  height: 40px;
+  margin-top: ((@toolbar-height-darwin - 40px) / 2);
+  width: 720px;
+  max-width: 100%;
+  padding: 0 12px;
+  border-radius: 20px;
+  background: @clean-search;
+  box-shadow: none;
+  transition: background 0.15s, box-shadow 0.15s;
+  .search-accessory.search {
+    margin-right: 6px;
+    opacity: 0.8;
+  }
+  .tokenizing-contenteditable,
+  .tokenizing-contenteditable .layer {
+    line-height: 40px;
+    font-size: 15px;
+  }
+  &:focus-within {
+    background: @clean-elevated;
+    box-shadow: @clean-shadow-1;
+  }
+  .suggestions {
+    top: 44px;
+    border-radius: 12px;
+    background: @clean-elevated;
+    box-shadow: @clean-shadow-3;
+    overflow: hidden;
+  }
+}
+
+// ---- Left icon rail ----------------------------------------------------------------------
+.nav-rail {
+  background: @clean-window;
+  .nav-rail-item {
+    width: 40px;
+    height: 30px;
+    border-radius: 15px;
+    margin-bottom: 10px;
+    &:hover {
+      background: @clean-hover;
+    }
+    &.active {
+      background: @clean-nav-active;
+      box-shadow: none;
+    }
+    &.active img.content-mask,
+    &.active .view-icon {
+      background-color: @clean-text;
+    }
+  }
+  .nav-rail-section::before {
+    border-top-color: @clean-line;
+  }
+}
+
+// ---- Main panel ----------------------------------------------------------------------------
+// The folder list sits directly on the window colour, so drop the framed card the nav
+// rail puts around the content area.
+.nav-rail-content {
+  margin: 0;
+  border: 0;
+  border-radius: 0;
+}
+
+// Every section sits on one rounded surface with the window colour around it. Its left
+// sidebar (folders, calendars, contact groups) stays on the window colour; every other
+// column is panel. The first panel column takes the left corners and the last the right.
+// clip-path rather than overflow, because thread rows are positioned against an outer
+// element and escape overflow clipping; the inset reaches 8px past the inner edge so the
+// column resize handles stay grabbable.
+.sheet > div {
+  padding: 0 12px 12px 0;
+  box-sizing: border-box;
+}
+.sheet > div > [class*='column-'] {
+  background: @clean-surface;
+}
+.sheet > div > :is(.column-RootSidebar, .column-CalendarSidebar, .column-ContactsSidebar) {
+  background: transparent;
+}
+.sheet
+  > div
+  > :is(.column-RootSidebar, .column-CalendarSidebar, .column-ContactsSidebar)
+  + [class*='column-'],
+.sheet
+  > div
+  > [class*='column-']:first-child:not(.column-RootSidebar):not(.column-CalendarSidebar):not(.column-ContactsSidebar) {
+  clip-path: inset(0 -8px 0 0 round @clean-radius-panel 0 0 @clean-radius-panel);
+}
+.sheet > div > [class*='column-']:last-child {
+  clip-path: inset(0 0 0 -8px round 0 @clean-radius-panel @clean-radius-panel 0);
+}
+.sheet
+  > div
+  > :is(.column-RootSidebar, .column-CalendarSidebar, .column-ContactsSidebar)
+  + [class*='column-']:last-child,
+.sheet
+  > div
+  > [class*='column-']:first-child:last-child:not(.column-RootSidebar):not(.column-CalendarSidebar):not(.column-ContactsSidebar) {
+  clip-path: inset(0 round @clean-radius-panel);
+}
+.column-MessageListSidebar {
+  border-left: 1px solid @clean-line;
+}
+
+// ---- Folder list ---------------------------------------------------------------------------
+.column-RootSidebar,
+.account-sidebar,
+.account-sidebar-sections {
+  background: transparent !important;
+}
+
+.account-sidebar .outline-view {
+  .heading {
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0;
+    color: @clean-text;
+    padding: 10px 2px 2px 20px;
+  }
+  .item-container {
+    margin-right: 10px;
+    border-radius: 0 @clean-radius-pill @clean-radius-pill 0;
+    transition: background 0.12s;
+    &:hover {
+      background: @clean-hover;
+    }
+    &:has(> .item.selected) {
+      background: @clean-nav-active;
+    }
+  }
+  .item {
+    height: 28px;
+    line-height: 28px;
+    padding-right: 12px;
+    font-size: 14px;
+    color: @clean-text;
+    img.content-mask {
+      background-color: @clean-text-2;
+    }
+    .item-count-box,
+    .item-count-box.alt-count {
+      margin-left: auto;
+      padding: 0;
+      background: transparent;
+      box-shadow: none;
+      color: @clean-text;
+      font-size: 12px;
+      font-weight: 600;
+    }
+    &.selected {
+      background: transparent;
+      color: @clean-text;
+      font-weight: 700;
+      img.content-mask {
+        background-color: @clean-text;
+      }
+    }
+  }
+}
+
+// ---- Thread list ---------------------------------------------------------------------------
+.thread-list,
+.draft-list {
+  .list-item {
+    background-color: @clean-row-read;
+    border-bottom: 1px solid @clean-line;
+    color: @clean-text-2;
+    &:hover {
+      box-shadow: @clean-row-hover-shadow;
+      z-index: 2;
+    }
+  }
+  .unread:not(.focused):not(.selected) {
+    background-color: @clean-row-unread;
+    color: @clean-text;
+    &:hover {
+      background-color: @clean-row-unread;
+    }
+  }
+  .unread:not(.focused):not(.selected):not(.next-is-selected) {
+    border-bottom: 1px solid @clean-line;
+  }
+  .participants,
+  .details .subject {
+    font-size: 14px;
+    color: @clean-text;
+  }
+  .details .snippet {
+    font-size: 14px;
+    opacity: 1;
+    color: @clean-text-3;
+  }
+  .timestamp {
+    font-size: 12px;
+    opacity: 1;
+    color: @clean-text-2;
+  }
+  .unread:not(.focused) .timestamp {
+    font-weight: 700;
+    color: @clean-text;
+  }
+
+  // Selected rows take a light accent tint with normal text, not the inverted
+  // white-on-accent the base styles give them.
+  .list-item.focused,
+  .list-item.selected {
+    background-color: @clean-row-selected !important;
+    color: @clean-text !important;
+    .thread-icon,
+    .draft-icon,
+    .mail-important-icon,
+    .mail-label {
+      filter: none;
+    }
+    .mail-label {
+      background: fade(@clean-text, 10%) !important;
+      color: @clean-text;
+    }
+  }
+}
+
+.thread-list .list-item:hover .list-column-HoverActions .inner {
+  background-image: linear-gradient(90deg, fade(@clean-row-read, 0%) 0%, @clean-row-read 40%);
+}
+.thread-list .list-item.unread:hover .list-column-HoverActions .inner {
+  background-image: linear-gradient(90deg, fade(@clean-row-unread, 0%) 0%, @clean-row-unread 40%);
+}
+.thread-list .list-item.selected:hover .list-column-HoverActions .inner,
+.thread-list .list-item.focused:hover .list-column-HoverActions .inner {
+  background-image: linear-gradient(90deg, fade(@clean-row-selected, 0%) 0%, @clean-row-selected 40%);
+  .action {
+    filter: none;
+  }
+}
+
+.mail-label {
+  border-radius: 4px;
+  font-size: 12px;
+}
+
+// ---- Reading pane --------------------------------------------------------------------------
+#message-list {
+  background: @clean-surface;
+  .message-subject {
+    font-size: 20px;
+    line-height: 26px;
+    font-weight: 400;
+    color: @clean-text;
+  }
+  .message-item-wrap .message-item-white-wrap {
+    background: @clean-surface;
+    border-radius: 0;
+    box-shadow: none;
+    border-bottom: 1px solid @clean-line;
+  }
+  .message-item-wrap.collapsed .message-item-white-wrap {
+    background: @clean-surface;
+    &:hover {
+      background: @clean-row-read;
+    }
+  }
+  .footer-reply-area-wrap {
+    margin-top: 16px;
+    border-radius: 18px;
+    background: @clean-surface;
+    box-shadow: none;
+    border: 1px solid @clean-outline;
+    &:hover {
+      background: @clean-hover;
+    }
+  }
+}
+
+.sidebar-panel-switcher {
+  border-radius: 16px;
+  background: @clean-search;
+  padding: 2px;
+  .sidebar-panel-tab {
+    border-radius: 14px;
+    &.active {
+      background: @clean-elevated;
+      box-shadow: @clean-shadow-1;
+    }
+  }
+}
+
+// ---- Buttons -------------------------------------------------------------------------------
+.btn.btn-emphasis {
+  border-radius: 16px;
+  background: @clean-accent-ink;
+  color: @clean-on-accent;
+  font-weight: 600;
+  box-shadow: none;
+  &:hover {
+    box-shadow: @clean-shadow-1;
+  }
+}
+
+// ---- Compose in the sidebar ----------------------------------------------------------------
+// The composer package renders SidebarComposeButton hidden; Clean shows it above the folders
+// and drops the toolbar's Compose button.
+.sidebar-compose {
+  display: block;
+  order: -1;
+  padding: 6px 12px 8px 8px;
+}
+.sidebar-compose-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  height: 48px;
+  padding: 0 22px 0 16px;
+  border: 0;
+  border-radius: 14px;
+  background: @clean-compose;
+  color: @clean-text;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: box-shadow 0.15s;
+  &:hover {
+    box-shadow: @clean-shadow-1;
+  }
+}
+body .sheet-toolbar .btn.btn-toolbar.item-compose {
+  display: none;
+}
+
+// ---- Labels under the main rail icons -------------------------------------------------------
+// Only the first group (Mail, Calendar, Contacts, Activity) is labelled; the lower groups
+// keep icon-only pills, since names like "Preferences" don't fit the rail.
+.nav-rail {
+  width: 64px;
+  > div:first-child .nav-rail-item {
+    width: 60px;
+    height: 46px;
+    margin: 0 0 6px;
+    flex-direction: column;
+    justify-content: flex-start;
+    padding-top: 4px;
+    border-radius: 0;
+    background: transparent !important;
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 6px;
+      width: 48px;
+      height: 28px;
+      border-radius: 14px;
+      transition: background 0.12s;
+    }
+    &:hover::before {
+      background: @clean-hover;
+    }
+    &.active::before {
+      background: @clean-nav-active;
+    }
+    > * {
+      position: relative;
+    }
+    &::after {
+      content: attr(aria-label);
+      position: relative;
+      margin-top: 6px;
+      font-size: 11px;
+      font-weight: 500;
+      line-height: 12px;
+      white-space: nowrap;
+      color: @clean-text-2;
+    }
+    &.active::after {
+      color: @clean-text;
+      font-weight: 600;
+    }
+  }
+}
+
+// ---- Floating composer ----------------------------------------------------------------------
+.floating-composer {
+  background: @clean-elevated;
+  border-radius: 16px 16px 0 0;
+  box-shadow: @clean-shadow-3;
+  &.mode-maximized {
+    border-radius: 16px;
+  }
+}
+.floating-composer-header {
+  height: 36px;
+  background: @clean-composer-head;
+  color: @clean-text;
+  font-weight: 600;
+}
+.floating-composer-button {
+  color: @clean-text-2;
+  &:hover {
+    background: @clean-hover;
+  }
+}
+
+// ---- Composer (floating, popped out and inline) -----------------------------------------------
+.composer-outer-wrap {
+  .composer-action-bar-wrap {
+    background: @clean-elevated !important;
+    border-top: 0 !important;
+    box-shadow: none !important;
+    .action-bar-cover {
+      background: @clean-elevated !important;
+    }
+  }
+  .composer-action-bar-content .btn.btn-toolbar {
+    border-radius: 15px;
+    background: transparent;
+    box-shadow: none;
+    &:hover {
+      background: @clean-hover;
+    }
+  }
+  .composer-participant-field,
+  .composer-subject {
+    border-bottom-color: @clean-line;
+  }
+  .button-dropdown.btn-send,
+  .button-dropdown.btn-send .primary-item,
+  .button-dropdown.btn-send .secondary-picker {
+    background: @clean-accent-ink !important;
+    background-image: none !important;
+  }
+  .button-dropdown.btn-send {
+    height: 32px;
+    border-radius: 16px;
+    overflow: hidden;
+    color: @clean-on-accent;
+    box-shadow: none;
+    font-weight: 600;
+    .primary-item {
+      padding: 0 14px 0 18px;
+      line-height: 32px;
+    }
+    .secondary-picker {
+      height: 32px;
+      line-height: 32px;
+      border-left: 1px solid fade(@clean-on-accent, 30%);
+      img.content-mask {
+        background-color: @clean-on-accent;
+      }
+    }
+    &:hover {
+      box-shadow: @clean-shadow-1;
+    }
+  }
+}
+
+// ---- Undo / send notifications as a snackbar ----------------------------------------------
+.undo-redo-toast {
+  bottom: 16px;
+  padding-left: 16px;
+  text-align: left;
+  .content {
+    height: 48px;
+    padding: 0 6px 0 0;
+    opacity: 1;
+    border-radius: 8px;
+    background: @clean-snack-bg;
+    box-shadow: @clean-shadow-2;
+  }
+  .message {
+    margin-right: 16px;
+    color: @clean-snack-text;
+  }
+  .action {
+    margin-right: 2px;
+    padding: 6px 12px;
+    border: 0;
+    border-radius: 6px;
+    background: transparent;
+    img {
+      background-color: @clean-snack-action;
+    }
+    .send-action-text,
+    .undo-action-text {
+      color: @clean-snack-action;
+      font-weight: 600;
+    }
+    &:hover,
+    &:active {
+      border: 0;
+      background: fade(@clean-snack-text, 10%);
+    }
+  }
+}
+
+// ---- Popovers and menus ---------------------------------------------------------------------
+.fixed-popover-container .fixed-popover {
+  border-radius: 12px;
+  box-shadow: @clean-shadow-3;
+}
+
+// ---- Inbox rows, Gmail-style ----------------------------------------------------------------
+// Star and Important marker side by side in a narrow column, the star outline always
+// visible as in Gmail rather than only on hover.
+.thread-list .list-tabular-item .list-column-★ {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 0 4px;
+  // Plugins inject icons here; with none the wrapper still holds whitespace and takes width.
+  .thread-injected-icons:not(:has(*)) {
+    display: none;
+  }
+}
+// The subject and preview truncate themselves; the column's own ellipsis would add a stray
+// "…" whenever the 14px text overflows it by a pixel.
+.thread-list .list-tabular-item .list-column-Message {
+  text-overflow: clip;
+}
+.thread-list .mail-important-icon {
+  width: 24px;
+  height: 24px;
+  margin-left: 0;
+  padding: 0;
+}
+.thread-list .list-item .thread-icon.thread-icon-none {
+  background-image: url(../static/images/thread-list/icon-star-action-hover-@2x.png);
+  background-size: 16px;
+  opacity: 0.45;
+  &:hover {
+    opacity: 1;
+  }
+}
+
+// Hover actions: round monochrome icons over the date, in Gmail's order (archive, delete,
+// read/unread, snooze). The glyph images are used as masks so they take the theme's ink.
+.thread-list .list-item:hover .list-column-HoverActions .inner {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  width: 220px;
+  left: -220px;
+  .thread-injected-quick-actions {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    margin-right: 12px;
+  }
+}
+.thread-list .list-item .list-column-HoverActions .action {
+  position: relative;
+  zoom: 1;
+  width: 32px;
+  height: 32px;
+  margin: 0;
+  border-radius: 16px;
+  border: 0 !important;
+  // The actions also carry .btn, whose outline would ring each icon.
+  box-shadow: none !important;
+  background: none !important;
+  filter: none !important;
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 7px;
+    background-color: @clean-text-2;
+    -webkit-mask-position: center;
+    -webkit-mask-repeat: no-repeat;
+    -webkit-mask-size: contain;
+  }
+  &:hover {
+    background: @clean-hover !important;
+    &::after {
+      background-color: @clean-text;
+    }
+  }
+}
+.thread-list .list-column-HoverActions {
+  .action-archive::after {
+    -webkit-mask-image: url(../static/images/thread-list-quick-actions/ic-quick-button-archive@2x.png);
+  }
+  .action-trash::after {
+    -webkit-mask-image: url(../static/images/thread-list-quick-actions/ic-quick-button-trash@2x.png);
+  }
+  .action-toggle-unread.is-unread::after {
+    -webkit-mask-image: url(../static/images/toolbar/toolbar-markasread@2x.png);
+  }
+  .action-toggle-unread.is-read::after {
+    -webkit-mask-image: url(../static/images/toolbar/toolbar-markasunread@2x.png);
+  }
+  .action-snooze {
+    order: 130;
+    &::after {
+      -webkit-mask-image: url(../static/images/thread-list-quick-actions/ic-quickaction-snooze@2x.png);
+    }
+  }
+}
+
+// ---- Mock-up fidelity: widths, chips, avatars, brand -------------------------------------
+// Folder list as wide as the design's 232px. The sidebars read these on layout.
+mailspring-workspace {
+  --account-sidebar-min-width: 232px;
+  --account-sidebar-max-width: 320px;
+}
+
+// Row columns at the design's widths: checkbox 32, star + Important 56, sender 190,
+// date 96; the message takes the rest.
+.thread-list .list-tabular-item {
+  .list-column-Check {
+    width: 32px !important;
+    padding: 0 0 0 8px;
+  }
+  .list-column-★ {
+    width: 56px !important;
+    padding: 0;
+    gap: 0;
+    .thread-icon,
+    .mail-important-icon {
+      flex: none;
+      width: 28px;
+    }
+  }
+  .list-column-Participants {
+    width: 190px !important;
+    padding: 0 8px;
+  }
+  .list-column-Date {
+    width: 96px !important;
+    padding: 0 12px 0 0;
+  }
+}
+
+// Label chips: the label's own colour at 15% on the panel, as in the design, instead of the
+// glossy pastel the base style draws. The label colour stays on the text.
+.thread-list .mail-label,
+#message-list .mail-label {
+  height: 20px;
+  padding: 0 6px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 20px;
+  background: ~'color-mix(in srgb, currentColor 15%, @{clean-surface})' !important;
+  background-image: none !important;
+  box-shadow: none !important;
+}
+
+// Unread count on the rail's Mail icon.
+.nav-rail .nav-rail-item-badge {
+  min-width: 16px;
+  height: 16px;
+  padding: 0 4px;
+  border-radius: 8px;
+  background: @clean-danger;
+  color: @clean-on-danger;
+  font-size: 10.5px;
+  font-weight: 700;
+  line-height: 16px;
+}
+
+// Calendar events: a tint with a thin border in the calendar's colour, no stripe down the
+// left edge. The stripe also marked unsynced events; those get a light hatch instead.
+body .calendar-event,
+body .month-view-event {
+  padding-left: 6px;
+  box-shadow: inset 0 0 0 1px ~'color-mix(in srgb, var(--event-band-color) 35%, transparent)';
+  &::before {
+    display: none !important;
+  }
+  &.pending {
+    background-image: ~'repeating-linear-gradient(135deg, color-mix(in srgb, var(--event-band-color) 22%, transparent) 0 4px, transparent 4px 8px)';
+  }
+  &.selected {
+    box-shadow: none;
+  }
+}
+
+// Sender avatars in the reading pane (SenderAvatar, hidden by default).
+.sender-avatar {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  font-size: 15px;
+  font-weight: 600;
+  background: ~'hsl(var(--avatar-hue) 45% @{clean-avatar-bg-lightness})';
+  color: ~'hsl(var(--avatar-hue) 40% @{clean-avatar-ink-lightness})';
+  &.small {
+    width: 28px;
+    height: 28px;
+    margin-right: 12px;
+    font-size: 12px;
+  }
+}
+// The whole message (header, body, attachments) sits in a column beside the avatar, as in
+// the design. Collapsed messages and the inline composer keep their own layout.
+#message-list article.message-item-wrap:not(.collapsed) .message-item-area {
+  padding-left: 56px;
+}
+#message-list .message-header {
+  position: relative;
+  min-height: 44px;
+  > .sender-avatar {
+    position: absolute;
+    left: -56px;
+    top: 0;
+  }
+}
+
+// App mark in the top bar, beside the window controls (AppBrand, hidden by default).
+.app-brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 100%;
+  margin-left: 12px;
+  color: @clean-text-2;
+  font-size: 20px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+  .app-brand-envelope {
+    fill: @clean-accent-ink;
+  }
+  .app-brand-flap {
+    stroke: @clean-surface;
+  }
+}
+
+// Agenda list beside the calendar: each event is a tint with a thin border in its calendar's
+// colour instead of a colour bar. The bar's other meanings move onto the event: a dashed
+// outline while awaiting your reply, a hatch while unsynced.
+body .agenda-panel {
+  .agenda-event {
+    margin-bottom: 4px;
+    padding: 4px 8px;
+    border-radius: 6px;
+    background: ~'color-mix(in srgb, var(--event-band-color) 12%, transparent)';
+    box-shadow: inset 0 0 0 1px ~'color-mix(in srgb, var(--event-band-color) 35%, transparent)';
+    &:hover {
+      background: ~'color-mix(in srgb, var(--event-band-color) 20%, transparent)';
+    }
+    &.awaiting-response {
+      box-shadow: none;
+      outline: 1px dashed ~'var(--event-band-color)';
+      outline-offset: -1px;
+    }
+    &.pending {
+      background-image: ~'repeating-linear-gradient(135deg, color-mix(in srgb, var(--event-band-color) 22%, transparent) 0 4px, transparent 4px 8px)';
+    }
+    &.selected {
+      background: @clean-accent-ink;
+      box-shadow: none;
+    }
+  }
+  .agenda-event-color-bar {
+    display: none;
+  }
+}
+
+// Preferences sit on the panel like every other section.
+.preferences-wrap,
+.preferences-wrap .preferences-content {
+  background: @clean-surface;
+}
+
+// No coloured side stripes anywhere: notes and cards get a tint and a thin border in the
+// same tone, and the list's keyboard cursor becomes a ring around the row.
+.preferences-wrap .platform-note {
+  border-left: 0;
+  border-radius: 10px;
+  background: ~'color-mix(in srgb, @{clean-accent-ink} 8%, @{clean-surface})';
+  box-shadow: inset 0 0 0 1px ~'color-mix(in srgb, @{clean-accent-ink} 25%, @{clean-surface})';
+}
+.container-identity .feature-explore-grid .feature {
+  border-left: 0 !important;
+  border-radius: 12px;
+  box-shadow: inset 0 0 0 1px @clean-line;
+  &:hover {
+    box-shadow: inset 0 0 0 1px @clean-line, @clean-shadow-1;
+  }
+}
+.list-tabular .list-tabular-item {
+  border-left: 0;
+  &.keyboard-cursor {
+    border-left: 0;
+    box-shadow: inset 0 0 0 2px ~'color-mix(in srgb, @{clean-accent-ink} 45%, transparent)';
+  }
+}
+
+// ---- Mock-up fidelity: top bar, list bar, rows, reply buttons ------------------------------
+// Rail in the design's order: Mail, Calendar, Contacts, Activity.
+.nav-rail > div:first-child {
+  .nav-rail-item[aria-label='Mail'] {
+    order: 1 !important;
+  }
+  .nav-rail-item[aria-label='Calendar'] {
+    order: 2 !important;
+  }
+  .nav-rail-item[aria-label='Contacts'] {
+    order: 3 !important;
+  }
+  .nav-rail-item[aria-label='Activity'] {
+    order: 4 !important;
+  }
+}
+
+// Menu button, Help, Preferences and account badge in the top bar.
+.sidebar-toggle {
+  display: flex;
+  align-items: center;
+  height: 100%;
+  margin-left: 6px;
+}
+.top-bar-actions {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  height: 100%;
+  margin-left: auto;
+  padding-right: 8px;
+  order: 1000;
+}
+.top-bar-button {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border: 0;
+  border-radius: 18px;
+  background: transparent;
+  color: @clean-text-2;
+  cursor: pointer;
+  -webkit-app-region: no-drag;
+  &:hover {
+    background: @clean-hover;
+  }
+}
+.top-bar-account {
+  width: 30px;
+  height: 30px;
+  margin-left: 6px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: @clean-nav-active;
+  color: @clean-text;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  -webkit-app-region: no-drag;
+}
+.app-brand {
+  margin-left: 4px;
+}
+
+// The bar above the list: select all, refresh, more, and the count.
+.thread-list-header-bar {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  flex: none;
+  height: 40px;
+  padding: 0 6px;
+  background: @clean-surface;
+  .header-bar-button {
+    display: grid;
+    place-items: center;
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    border: 0;
+    border-radius: 18px;
+    background: transparent;
+    color: @clean-text-2;
+    cursor: pointer;
+    &:hover:not([disabled]) {
+      background: @clean-hover;
+    }
+    &[disabled] {
+      opacity: 0.38;
+      cursor: default;
+    }
+  }
+  .header-bar-spacer {
+    flex: 1;
+  }
+  .header-bar-count {
+    margin: 0 4px;
+    font-size: 12px;
+    color: @clean-text-2;
+    white-space: nowrap;
+  }
+}
+
+// Unread rows show the star outline like the rest; bold text and the white row already mark
+// them unread, and the hover action toggles read state.
+.thread-list .list-item .thread-icon.thread-icon-unread {
+  background-image: url(../static/images/thread-list/icon-star-action-hover-@2x.png);
+  background-size: 16px;
+  opacity: 0.45;
+  &:hover {
+    opacity: 1;
+  }
+}
+
+// Attachments as a chip with the file's name rather than a paperclip.
+.thread-list .details {
+  .thread-icon-attachment {
+    display: none;
+  }
+  .thread-attachment-chip {
+    display: inline-flex;
+    align-items: center;
+    flex: none;
+    gap: 6px;
+    max-width: 200px;
+    height: 24px;
+    margin-left: 8px;
+    padding: 0 10px 0 8px;
+    border: 1px solid @clean-outline;
+    border-radius: 12px;
+    background: @clean-surface;
+    color: @clean-text-2;
+    font-size: 12px;
+    font-weight: 400;
+    .kind {
+      flex: none;
+      width: 10px;
+      height: 12px;
+      border-radius: 2px;
+      background: @clean-text-3;
+    }
+    .kind-pdf {
+      background: #d93025;
+    }
+    .kind-image {
+      background: #1a73e8;
+    }
+    .kind-doc {
+      background: #1a73e8;
+    }
+    .kind-sheet {
+      background: #188038;
+    }
+    .name {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .more {
+      color: @clean-text-3;
+    }
+  }
+}
+
+// Reply, Reply all and Forward as pill buttons in the message column, as in the design.
+#message-list {
+  .footer-reply-area-wrap {
+    display: none;
+  }
+  .footer-reply-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    // Lined up with the message text, which starts 56px in beside the avatar.
+    max-width: none;
+    margin: 16px 0 24px;
+    padding-left: 56px;
+    box-sizing: border-box;
+    width: 100%;
+  }
+  .reply-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    height: 32px;
+    padding: 0 16px 0 12px;
+    border: 1px solid @clean-outline;
+    border-radius: 16px;
+    background: @clean-surface;
+    color: @clean-text-2;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    img.content-mask {
+      width: 16px;
+      background-color: @clean-text-2;
+    }
+    &:hover {
+      background: @clean-hover;
+    }
+  }
+}
+
+// With a message open the folder column's toolbar also holds the back button, and there is
+// no room for the name beside it.
+.sheet-toolbar .item-container:has(> .item-back) .app-brand {
+  display: none;
+}
+.app-brand {
+  margin-right: 8px;
+}
+
+// Folder list collapsed to its icons by the menu button (body.folders-collapsed).
+body.folders-collapsed {
+  // No room beside the menu button in the narrow column's toolbar.
+  .app-brand,
+  .account-switcher {
+    display: none;
+  }
+  .column-RootSidebar {
+    width: 72px !important;
+    min-width: 72px !important;
+    max-width: 72px !important;
+  }
+  .sidebar-compose {
+    padding: 6px 0 8px 12px;
+  }
+  .sidebar-compose-button {
+    width: 48px;
+    padding: 0;
+    justify-content: center;
+    span {
+      display: none;
+    }
+  }
+  .account-sidebar .outline-view {
+    .heading,
+    .disclosure-triangle {
+      display: none;
+    }
+    .item-container {
+      width: 48px;
+      margin: 0 0 0 12px;
+      border-radius: @clean-radius-pill;
+    }
+    .item {
+      justify-content: center;
+      padding: 0;
+      .name,
+      .item-count-box,
+      .item-action-button {
+        display: none;
+      }
+      .icon {
+        padding-right: 0;
+      }
+    }
+  }
+}

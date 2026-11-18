@@ -7,12 +7,11 @@ import {
   DraftStore,
   WorkspaceStore,
   ComponentRegistry,
-  InflatesDraftClientId,
 } from 'mailspring-exports';
 import ComposeButton from './compose-button';
-import ComposerView from './composer-view';
-
-const ComposerViewForDraftClientId = InflatesDraftClientId(ComposerView);
+import FloatingComposers from './floating-composer';
+import SidebarComposeButton from './sidebar-compose-button';
+import { ComposerViewForDraftClientId } from './composer-view-for-draft';
 
 class ComposerWithWindowProps extends React.Component<
   Record<string, unknown>,
@@ -107,6 +106,12 @@ export function activate() {
     ComponentRegistry.register(ComposeButton, {
       location: WorkspaceStore.Location.RootSidebar.Toolbar,
     });
+    ComponentRegistry.register(SidebarComposeButton, {
+      location: WorkspaceStore.Location.RootSidebar,
+    });
+    ComponentRegistry.register(FloatingComposers, {
+      location: WorkspaceStore.Sheet.Global.Footer,
+    });
   } else if (AppEnv.isThreadWindow()) {
     ComponentRegistry.register(ComposerViewForDraftClientId, {
       role: 'Composer',
@@ -133,6 +138,8 @@ export function deactivate() {
   if (AppEnv.isMainWindow()) {
     ComponentRegistry.unregister(ComposerViewForDraftClientId);
     ComponentRegistry.unregister(ComposeButton);
+    ComponentRegistry.unregister(SidebarComposeButton);
+    ComponentRegistry.unregister(FloatingComposers);
   } else {
     ComponentRegistry.unregister(ComposerWithWindowProps);
   }

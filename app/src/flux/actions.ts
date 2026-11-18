@@ -407,17 +407,43 @@ export const composeSendAgain = create('composeSendAgain', ActionScopeWindow);
 export const composeAndSendForward = create('composeAndSendForward', ActionScopeWindow);
 
 /*
-  Public: Pop out the draft with the provided ID so the user can edit it in another
-  window.
+  Public: Open the draft with the provided ID for editing outside the thread. In the main
+  window this is the floating composer panel when `core.composing.floatingComposer` is on;
+  pass `{ inWindow: true }` to always use a separate composer window.
 
   *Scope: Window*
 
   ```
   messageId = '123'
   Actions.composePopoutDraft(messageId)
+  Actions.composePopoutDraft(messageId, { inWindow: true })
   ```
   */
 export const composePopoutDraft = create('composePopoutDraft', ActionScopeWindow);
+
+/*
+  Public: Show the draft in the floating composer panel at the bottom of the main window.
+  Dispatched by the {DraftStore}; listened to by the composer package.
+
+  *Scope: Window*
+
+  ```
+  Actions.composeInFloatingPanel(headerMessageId, { newDraft: true })
+  ```
+  */
+export const composeInFloatingPanel = create('composeInFloatingPanel', ActionScopeWindow);
+
+/*
+  Public: Close the floating composer panel showing this draft, if there is one. The draft
+  itself is kept.
+
+  *Scope: Window*
+
+  ```
+  Actions.closeFloatingComposer(headerMessageId)
+  ```
+  */
+export const closeFloatingComposer = create('closeFloatingComposer', ActionScopeWindow);
 
 /*
   Public: Open a new composer window for creating a new draft from scratch.

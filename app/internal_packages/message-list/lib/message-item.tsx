@@ -16,6 +16,7 @@ import {
 } from 'mailspring-component-kit';
 
 import MessageParticipants from './message-participants';
+import SenderAvatar from './sender-avatar';
 import MessageItemBody from './message-item-body';
 import MessageTimestamp from './message-timestamp';
 import MessageControls from './message-controls';
@@ -183,6 +184,7 @@ export default class MessageItem extends React.Component<MessageItemProps, Messa
         className={`message-header ${pending && 'pending'}`}
         onClick={this._onClickHeader}
       >
+        <SenderAvatar contact={message.from && message.from[0]} />
         <InjectedComponent
           matching={{ role: 'MessageHeader' }}
           exposedProps={{ message: message, thread: thread, messages: messages }}
@@ -316,6 +318,7 @@ export default class MessageItem extends React.Component<MessageItemProps, Messa
       <div className={className} onClick={this._onToggleCollapsed}>
         <div className="message-item-white-wrap">
           <div className="message-item-area">
+            <SenderAvatar contact={from && from[0]} small />
             <div className="collapsed-from">
               {from &&
                 from[0] &&

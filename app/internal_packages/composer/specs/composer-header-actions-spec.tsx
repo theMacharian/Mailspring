@@ -58,12 +58,12 @@ describe('ComposerHeaderActions', function () {
     expect(els.length).toBe(0);
   });
 
-  it('pops out the composer when clicked', function () {
+  it('pops out the composer to a separate window when clicked', function () {
     spyOn(Actions, 'composePopoutDraft');
     makeField.call(this, { enabledFields: [Fields.To] });
     const el = ReactTestUtils.findRenderedDOMComponentWithClass(this.component, 'show-popout');
     ReactTestUtils.Simulate.click(ReactDOM.findDOMNode(el) as Element);
-    expect(Actions.composePopoutDraft).toHaveBeenCalled();
+    expect(Actions.composePopoutDraft).toHaveBeenCalledWith('a', { inWindow: true });
   });
 
   it('shows and focuses cc when clicked', function () {

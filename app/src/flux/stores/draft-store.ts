@@ -394,13 +394,26 @@ class DraftStore extends MailspringStore {
     await this._onPopoutDraft(headerMessageId, { newDraft: true });
   };
 
-  _onPopoutDraft = async (headerMessageId: string, options: { newDraft?: boolean } = {}) => {
+  _onPopoutDraft = async (
+    headerMessageId: string,
+    options: { newDraft?: boolean; inWindow?: boolean } = {}
+  ) => {
     if (headerMessageId == null) {
       throw new Error('DraftStore::onPopoutDraftId - You must provide a headerMessageId');
     }
 
     const session = await this.sessionForClientId(headerMessageId);
     if (!session.draft()) return;
+
+    const { inWindow, ...windowOptions } = options;
+    if (
+      !inWindow &&
+      AppEnv.isMainWindow() &&
+      AppEnv.config.get('core.composing.floatingComposer') !== false
+    ) {
+      Actions.composeInFloatingPanel(headerMessageId, { newDraft: !!options.newDraft });
+      return;
+    }
 
     await session.changes.commit();
     const draftJSON = session.draft().toJSON();
@@ -412,7 +425,7 @@ class DraftStore extends MailspringStore {
       hidden: true, // We manually show in ComposerWithWindowProps::onDraftReady
       windowType: 'composer',
       windowKey: `composer-${headerMessageId}`,
-      windowProps: Object.assign(options, { headerMessageId, draftJSON }),
+      windowProps: Object.assign(windowOptions, { headerMessageId, draftJSON }),
       title: options.newDraft ? localized('New Message') : localized('Message'),
     });
   };

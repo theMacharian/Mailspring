@@ -324,6 +324,10 @@
 @archive-img: '../static/images/thread-list-quick-actions/ic-quick-button-archive@2x.png';
 @trash-img: '../static/images/thread-list-quick-actions/ic-quick-button-trash@2x.png';
 @snooze-img: '../static/images/thread-list-quick-actions/ic-quickaction-snooze@2x.png';
+// No quick-action artwork exists for read state, so these reuse the toolbar glyphs, scaled
+// to match the other quick actions after their 0.5 zoom.
+@mark-read-img: '../static/images/toolbar/toolbar-markasread@2x.png';
+@mark-unread-img: '../static/images/toolbar/toolbar-markasunread@2x.png';
 
 .thread-list .list-item .list-column-HoverActions {
   display: none;
@@ -343,6 +347,12 @@
   }
   .action.action-snooze {
     background: url(@snooze-img) center no-repeat, @background-gradient;
+  }
+  .action.action-toggle-unread.is-unread {
+    background: url(@mark-read-img) center / 36px no-repeat, @background-gradient;
+  }
+  .action.action-toggle-unread.is-read {
+    background: url(@mark-unread-img) center / 36px no-repeat, @background-gradient;
   }
 }
 body.platform-win32 {
@@ -407,6 +417,12 @@ body.platform-win32 {
   }
   .action.action-snooze {
     background: url(@snooze-img) center no-repeat;
+  }
+  .action.action-toggle-unread.is-unread {
+    background: url(@mark-read-img) center / 36px no-repeat;
+  }
+  .action.action-toggle-unread.is-read {
+    background: url(@mark-unread-img) center / 36px no-repeat;
   }
 }
 
@@ -559,4 +575,13 @@ body.is-blurred {
   .sheet-toolbar { 
     -webkit-app-region: none;
   }
+}
+// Shown by themes that want a select-all / refresh / count bar above the list (Clean).
+.thread-list-header-bar {
+  display: none;
+}
+
+// Shown instead of the paperclip by themes that want attachment chips (Clean).
+.thread-attachment-chip {
+  display: none;
 }

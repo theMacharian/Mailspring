@@ -1,0 +1,1251 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mailspring Clean Mock-up</title>
+<meta name="description" content="Clickable design mock-up of a clean, Gmail-style look for Mailspring: inbox, reading view, floating composer, snooze, send later and reminders.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,300..500,0..1,0&display=block" rel="stylesheet">
+<style>
+/* ---------------------------------------------------------------------------
+   Design tokens. Change --accent to re-colour everything: every tint below is
+   mixed from it, in light and dark.
+--------------------------------------------------------------------------- */
+:root {
+  --accent: #0b57d0;
+  --font: 'Figtree', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --row-h: 36px;
+  --sidebar-w: 232px;
+
+  color-scheme: light;
+  --bg: color-mix(in srgb, var(--accent) 5%, #f7f8fa);
+  --panel: #ffffff;
+  --elevated: #ffffff;
+  --text: #1f1f1f;
+  --text-2: #444746;
+  --text-3: #5f6368;
+  --line: color-mix(in srgb, #64798f 18%, transparent);
+  --outline: #c4c7c5;
+  --hover: color-mix(in srgb, #444746 8%, transparent);
+  --press: color-mix(in srgb, #444746 14%, transparent);
+  --row-read: color-mix(in srgb, var(--accent) 4%, #ffffff);
+  --row-unread: #ffffff;
+  --row-selected: color-mix(in srgb, var(--accent) 15%, #ffffff);
+  --nav-active: color-mix(in srgb, var(--accent) 20%, #ffffff);
+  --compose-bg: color-mix(in srgb, var(--accent) 24%, #ffffff);
+  --search-bg: color-mix(in srgb, var(--accent) 8%, #eef0f3);
+  --composer-head: color-mix(in srgb, var(--accent) 7%, #f3f5f8);
+  --accent-ink: var(--accent);
+  --btn-bg: var(--accent);
+  --on-accent: #ffffff;
+  --star: #e8a317;
+  --danger: #c5221f;
+  --on-danger: #ffffff;
+  --warn: #b06000;
+  --snack-bg: #2f3133;
+  --snack-text: #f1f3f4;
+  --snack-action: color-mix(in srgb, var(--accent) 40%, #ffffff);
+  --scrim: rgba(15, 17, 20, .4);
+  --shadow-1: 0 1px 2px rgba(60,64,67,.3), 0 1px 3px 1px rgba(60,64,67,.15);
+  --shadow-2: 0 1px 2px rgba(60,64,67,.3), 0 2px 6px 2px rgba(60,64,67,.15);
+  --shadow-3: 0 1px 3px rgba(60,64,67,.3), 0 4px 8px 3px rgba(60,64,67,.15);
+  --row-hover-shadow: inset 1px 0 0 #dadce0, inset -1px 0 0 #dadce0, 0 1px 2px rgba(60,64,67,.3), 0 1px 3px 1px rgba(60,64,67,.15);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --bg: color-mix(in srgb, var(--accent) 7%, #111316);
+    --panel: #1b1c1f;
+    --elevated: #26282b;
+    --text: #e3e3e3;
+    --text-2: #c4c7c5;
+    --text-3: #9aa0a6;
+    --line: rgba(255,255,255,.08);
+    --outline: #5f6368;
+    --hover: rgba(232,234,237,.08);
+    --press: rgba(232,234,237,.14);
+    --row-read: #1b1c1f;
+    --row-unread: color-mix(in srgb, var(--accent) 7%, #24262a);
+    --row-selected: color-mix(in srgb, var(--accent) 30%, #1b1c1f);
+    --nav-active: color-mix(in srgb, var(--accent) 40%, #1b1c1f);
+    --compose-bg: color-mix(in srgb, var(--accent) 50%, #1b1c1f);
+    --search-bg: color-mix(in srgb, var(--accent) 10%, #25272b);
+    --composer-head: #2c2e32;
+    --accent-ink: color-mix(in srgb, var(--accent) 45%, #ffffff);
+    --btn-bg: color-mix(in srgb, var(--accent) 45%, #ffffff);
+    --on-accent: #0d1117;
+    --star: #fdd663;
+    --danger: #f28b82;
+    --on-danger: #1f1f1f;
+    --warn: #fbbc6a;
+    --snack-bg: #e3e3e3;
+    --snack-text: #1f1f1f;
+    --snack-action: var(--accent);
+    --scrim: rgba(0,0,0,.55);
+    --shadow-1: 0 1px 2px rgba(0,0,0,.5), 0 1px 3px 1px rgba(0,0,0,.3);
+    --shadow-2: 0 1px 2px rgba(0,0,0,.5), 0 2px 6px 2px rgba(0,0,0,.3);
+    --shadow-3: 0 1px 3px rgba(0,0,0,.5), 0 4px 8px 3px rgba(0,0,0,.35);
+    --row-hover-shadow: inset 1px 0 0 rgba(255,255,255,.1), inset -1px 0 0 rgba(255,255,255,.1), 0 1px 3px rgba(0,0,0,.6);
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: color-mix(in srgb, var(--accent) 7%, #111316);
+  --panel: #1b1c1f;
+  --elevated: #26282b;
+  --text: #e3e3e3;
+  --text-2: #c4c7c5;
+  --text-3: #9aa0a6;
+  --line: rgba(255,255,255,.08);
+  --outline: #5f6368;
+  --hover: rgba(232,234,237,.08);
+  --press: rgba(232,234,237,.14);
+  --row-read: #1b1c1f;
+  --row-unread: color-mix(in srgb, var(--accent) 7%, #24262a);
+  --row-selected: color-mix(in srgb, var(--accent) 30%, #1b1c1f);
+  --nav-active: color-mix(in srgb, var(--accent) 40%, #1b1c1f);
+  --compose-bg: color-mix(in srgb, var(--accent) 50%, #1b1c1f);
+  --search-bg: color-mix(in srgb, var(--accent) 10%, #25272b);
+  --composer-head: #2c2e32;
+  --accent-ink: color-mix(in srgb, var(--accent) 45%, #ffffff);
+  --btn-bg: color-mix(in srgb, var(--accent) 45%, #ffffff);
+  --on-accent: #0d1117;
+  --star: #fdd663;
+  --danger: #f28b82;
+  --on-danger: #1f1f1f;
+  --warn: #fbbc6a;
+  --snack-bg: #e3e3e3;
+  --snack-text: #1f1f1f;
+  --snack-action: var(--accent);
+  --scrim: rgba(0,0,0,.55);
+  --shadow-1: 0 1px 2px rgba(0,0,0,.5), 0 1px 3px 1px rgba(0,0,0,.3);
+  --shadow-2: 0 1px 2px rgba(0,0,0,.5), 0 2px 6px 2px rgba(0,0,0,.3);
+  --shadow-3: 0 1px 3px rgba(0,0,0,.5), 0 4px 8px 3px rgba(0,0,0,.35);
+  --row-hover-shadow: inset 1px 0 0 rgba(255,255,255,.1), inset -1px 0 0 rgba(255,255,255,.1), 0 1px 3px rgba(0,0,0,.6);
+}
+:root[data-density="comfortable"] { --row-h: 44px; }
+:root[data-density="compact"] { --row-h: 30px; }
+
+/* --------------------------------------------------------------- base ---- */
+* { box-sizing: border-box; }
+html, body { height: 100%; }
+body {
+  margin: 0; background: var(--bg); color: var(--text);
+  font-family: var(--font); font-size: 14px; line-height: 20px;
+  -webkit-font-smoothing: antialiased; overflow: hidden;
+}
+button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; }
+input, textarea { font: inherit; color: inherit; }
+:focus-visible { outline: 2px solid var(--accent-ink); outline-offset: 1px; }
+[hidden] { display: none !important; }
+
+.ms {
+  font-family: 'Material Symbols Outlined'; font-weight: normal; font-style: normal;
+  font-size: 20px; line-height: 1; letter-spacing: normal; text-transform: none;
+  display: inline-block; white-space: nowrap; direction: ltr; flex: none; user-select: none;
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20;
+  -webkit-font-smoothing: antialiased; width: 1em; overflow: hidden;
+}
+.ms.fill { font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 20; }
+
+.icon-btn {
+  width: 36px; height: 36px; border-radius: 50%; display: inline-grid; place-items: center;
+  color: var(--text-2); flex: none; transition: background .12s;
+}
+.icon-btn:hover { background: var(--hover); }
+.icon-btn:active { background: var(--press); }
+.icon-btn.sm { width: 28px; height: 28px; }
+.icon-btn[disabled] { opacity: .38; pointer-events: none; }
+
+/* ------------------------------------------------------------- layout ---- */
+.app {
+  display: grid; height: 100dvh;
+  grid-template-columns: 64px var(--sidebar-w) minmax(0, 1fr);
+  grid-template-rows: 56px minmax(0, 1fr);
+}
+.app.collapsed { --sidebar-w: 64px; }
+
+.topbar { grid-column: 1 / -1; display: flex; align-items: center; gap: 6px; padding: 6px 12px 6px 10px; }
+.tb-left { display: flex; align-items: center; gap: 2px; width: 286px; flex: none; }
+.brand { display: flex; align-items: center; gap: 8px; padding-left: 2px; color: var(--text-2); font-size: 20px; font-weight: 500; letter-spacing: -.01em; white-space: nowrap; }
+.brand-tag { font-size: 11px; font-weight: 600; letter-spacing: .02em; padding: 2px 8px; border-radius: 999px; background: var(--search-bg); color: var(--text-3); }
+.search {
+  flex: 1; max-width: 720px; height: 40px; border-radius: 20px; background: var(--search-bg);
+  display: flex; align-items: center; gap: 2px; padding: 0 4px; transition: background .15s, box-shadow .15s;
+}
+.search:focus-within { background: var(--elevated); box-shadow: var(--shadow-1); }
+.search input { flex: 1; min-width: 0; height: 100%; border: 0; background: none; outline: none; font-size: 15px; }
+.search input::placeholder { color: var(--text-2); }
+.tb-right { margin-left: auto; display: flex; align-items: center; gap: 2px; }
+
+.avatar {
+  --av: var(--accent);
+  width: 32px; height: 32px; border-radius: 50%; display: grid; place-items: center; flex: none;
+  font-size: 13px; font-weight: 600;
+  background: color-mix(in srgb, var(--av) 22%, var(--panel));
+  color: color-mix(in srgb, var(--av) 75%, var(--text));
+}
+.avatar.lg { width: 40px; height: 40px; font-size: 15px; }
+.tb-right .avatar { margin-left: 6px; width: 30px; height: 30px; }
+
+/* rail */
+.rail { display: flex; flex-direction: column; align-items: center; gap: 8px; padding-top: 0; }
+.rail-item { display: flex; flex-direction: column; align-items: center; gap: 2px; width: 56px; font-size: 11.5px; font-weight: 500; color: var(--text-2); }
+.rail-item .pill { width: 48px; height: 28px; border-radius: 14px; display: grid; place-items: center; position: relative; transition: background .12s; }
+.rail-item:hover .pill { background: var(--hover); }
+.rail-item.active { color: var(--text); }
+.rail-item.active .pill { background: var(--nav-active); }
+.rail-item.active .ms { font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 20; }
+.badge {
+  position: absolute; top: -2px; left: 28px; min-width: 16px; height: 16px; padding: 0 4px; border-radius: 8px;
+  background: var(--danger); color: var(--on-danger); font-size: 10.5px; font-weight: 700; line-height: 16px; text-align: center;
+}
+
+/* sidebar */
+.sidebar { overflow-y: auto; overflow-x: hidden; padding: 0 12px 12px 0; }
+.compose {
+  display: flex; align-items: center; gap: 10px; height: 48px; padding: 0 20px 0 14px; margin: 0 0 10px 0;
+  border-radius: 14px; background: var(--compose-bg); color: var(--text); font-weight: 600; transition: box-shadow .15s;
+}
+.compose:hover { box-shadow: var(--shadow-1); }
+.compose .ms { font-size: 22px; }
+.nav-item {
+  display: flex; align-items: center; gap: 14px; width: 100%; height: 28px; padding: 0 10px 0 20px;
+  border-radius: 0 14px 14px 0; text-align: left; color: var(--text); transition: background .12s;
+}
+.nav-item:hover { background: var(--hover); }
+.nav-item.active { background: var(--nav-active); font-weight: 700; }
+.nav-item.active .ms { font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 20; }
+.nav-item.unread { font-weight: 700; }
+.nav-item .label { flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.nav-item .count { font-size: 12px; }
+.nav-item .ms.lbl { color: var(--lc); font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 20; }
+.nav-head { display: flex; align-items: center; justify-content: space-between; padding: 10px 2px 2px 20px; font-size: 14px; font-weight: 600; }
+.app.collapsed .sidebar { padding-right: 0; }
+.app.collapsed .compose { width: 48px; padding: 0; justify-content: center; margin-left: 8px; }
+.app.collapsed .compose .label,
+.app.collapsed .nav-item .label,
+.app.collapsed .nav-item .count,
+.app.collapsed .nav-head { display: none; }
+.app.collapsed .nav-item { width: 48px; padding: 0; justify-content: center; border-radius: 14px; margin-left: 8px; }
+
+/* panel */
+.panel {
+  grid-column: 3; background: var(--panel); border-radius: 14px; margin: 0 12px 12px 0;
+  display: flex; flex-direction: column; min-height: 0; overflow: hidden; position: relative;
+}
+.toolbar { display: flex; align-items: center; gap: 0; height: 40px; padding: 0 6px; flex: none; }
+.toolbar .sep { width: 1px; height: 20px; background: var(--line); margin: 0 6px; }
+.spacer { flex: 1; }
+.pager { font-size: 12px; color: var(--text-2); margin: 0 4px; white-space: nowrap; }
+.scroll { flex: 1; overflow: auto; min-height: 0; }
+.results { padding: 2px 16px 8px; color: var(--text-2); font-size: 13px; }
+
+/* --------------------------------------------------------- thread list ---- */
+.row {
+  display: grid; grid-template-columns: 32px 28px minmax(120px, 190px) minmax(0, 1fr) auto;
+  align-items: center; column-gap: 4px; min-height: var(--row-h); padding: 0 12px 0 6px;
+  border-bottom: 1px solid var(--line); background: var(--row-read); color: var(--text-2);
+  cursor: pointer; position: relative;
+}
+.row.unread { background: var(--row-unread); }
+.row.unread .from, .row.unread .subject, .row.unread .date { font-weight: 700; color: var(--text); }
+.row:hover { box-shadow: var(--row-hover-shadow); z-index: 1; }
+.row.selected { background: var(--row-selected); }
+.row .icon-btn { color: var(--text-3); }
+.row .from { padding-left: 8px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--text); }
+.row .from .n { font-weight: 400; color: var(--text-3); margin-left: 4px; font-size: 12px; }
+.row .content { min-width: 0; padding: 0 6px; }
+.line { display: flex; align-items: center; gap: 6px; white-space: nowrap; overflow: hidden; }
+.subject { color: var(--text); flex: none; max-width: 70%; overflow: hidden; text-overflow: ellipsis; }
+.snippet { color: var(--text-3); overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+.end { display: flex; align-items: center; justify-content: flex-end; min-width: 68px; }
+.date { font-size: 12px; color: var(--text-2); white-space: nowrap; padding-right: 4px; }
+.date.accent { color: var(--accent-ink); font-weight: 600; }
+.actions { display: none; }
+.row:hover .actions, .row:focus-within .actions { display: flex; }
+.row:hover .date, .row:focus-within .date { display: none; }
+.star.on .ms { color: var(--star); font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 20; }
+.draft-tag { color: var(--danger); }
+.row-avatar { display: none; }
+.att-line { grid-column: 4 / 6; grid-row: 2; display: flex; flex-wrap: wrap; gap: 6px; padding: 0 0 7px 6px; }
+:root[data-density="comfortable"] .att-line, :root[data-density="compact"] .att-line { display: none; }
+.att-chip {
+  display: inline-flex; align-items: center; gap: 5px; height: 26px; padding: 0 10px 0 7px; max-width: 200px;
+  border: 1px solid var(--outline); border-radius: 13px; font-size: 12.5px; color: var(--text-2); background: var(--panel);
+}
+.att-chip span:last-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.k-pdf { color: #d93025; } .k-img { color: #1a73e8; } .k-doc { color: #188038; }
+
+.chip {
+  --lc: var(--text-3);
+  display: inline-flex; align-items: center; gap: 3px; height: 20px; padding: 0 6px; border-radius: 4px; flex: none;
+  font-size: 12px; font-weight: 500; line-height: 20px;
+  background: color-mix(in srgb, var(--lc) 15%, var(--panel));
+  color: color-mix(in srgb, var(--lc) 78%, var(--text));
+}
+.chip .ms { font-size: 14px; }
+.chip.warn { --lc: var(--warn); }
+.chip.info { --lc: var(--accent-ink); }
+
+.empty { display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 72px 20px; color: var(--text-3); text-align: center; }
+.empty .ms { font-size: 56px; width: auto; color: var(--outline); }
+.empty strong { color: var(--text-2); font-weight: 600; }
+
+/* -------------------------------------------------------- thread view ---- */
+.thread { padding: 0 0 48px; }
+.t-head { display: flex; align-items: flex-start; gap: 6px; padding: 12px 12px 10px 60px; }
+.t-title { flex: 1; display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.t-title h1 { font-size: 20px; line-height: 26px; font-weight: 400; margin: 0; color: var(--text); }
+.t-chip { padding-right: 2px; }
+.t-chip button { width: 16px; height: 16px; border-radius: 3px; display: grid; place-items: center; }
+.t-chip button:hover { background: color-mix(in srgb, var(--lc) 25%, transparent); }
+.notice {
+  --nc: var(--warn);
+  display: flex; align-items: center; gap: 10px; margin: 0 16px 10px 60px; padding: 5px 6px 5px 12px; border-radius: 10px;
+  background: color-mix(in srgb, var(--nc) 10%, var(--panel));
+  border: 1px solid color-mix(in srgb, var(--nc) 28%, var(--panel));
+}
+.notice.info { --nc: var(--accent-ink); }
+.notice > .ms { color: var(--nc); }
+.notice .grow { flex: 1; }
+.text-btn { height: 30px; padding: 0 10px; border-radius: 15px; color: var(--accent-ink); font-weight: 600; white-space: nowrap; }
+.text-btn:hover { background: color-mix(in srgb, var(--accent-ink) 10%, transparent); }
+
+.msg { display: grid; grid-template-columns: 60px minmax(0, 1fr); padding: 10px 12px 10px 0; width: 100%; text-align: left; }
+.msg + .msg { border-top: 1px solid var(--line); }
+.msg > .avatar { justify-self: center; margin-top: 2px; }
+.msg-head { display: flex; align-items: flex-start; gap: 8px; flex-wrap: wrap; }
+.who { flex: 1; min-width: 200px; }
+.who .name { font-weight: 700; color: var(--text); }
+.who .email { font-size: 12px; color: var(--text-3); }
+.who .to { font-size: 12px; color: var(--text-3); display: flex; align-items: center; }
+.meta { display: flex; align-items: center; color: var(--text-3); font-size: 12px; white-space: nowrap; }
+.meta .time { margin-right: 6px; }
+.msg-body { padding: 8px 8px 2px 0; color: var(--text); line-height: 22px; max-width: 74ch; }
+.msg-body p { margin: 0 0 10px; }
+.att-cards { display: flex; gap: 10px; flex-wrap: wrap; padding: 2px 0 6px; }
+.att-card { width: 168px; border: 1px solid var(--line); border-radius: 12px; overflow: hidden; background: var(--panel); text-align: left; }
+.att-card:hover { box-shadow: var(--shadow-1); }
+.att-card .prev { height: 80px; display: grid; place-items: center; background: color-mix(in srgb, var(--text-3) 8%, var(--panel)); }
+.att-card .prev .ms { font-size: 40px; }
+.att-card .cap { display: flex; align-items: center; gap: 6px; padding: 6px 8px; font-size: 12px; }
+.att-card .cap .nm { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 600; color: var(--text); }
+.att-card .cap .sz { color: var(--text-3); }
+.msg.collapsed { cursor: pointer; align-items: center; padding-top: 7px; padding-bottom: 7px; }
+.msg.collapsed:hover { background: var(--hover); }
+.msg.collapsed .avatar { width: 28px; height: 28px; font-size: 12px; }
+.c-line { display: flex; align-items: center; gap: 16px; min-width: 0; white-space: nowrap; }
+.c-line .name { font-weight: 700; flex: none; width: 160px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.c-line .snippet { flex: 1; }
+.c-line .time { font-size: 12px; color: var(--text-3); white-space: nowrap; }
+
+.reply-row { display: flex; gap: 8px; padding: 12px 12px 0 60px; flex-wrap: wrap; }
+.pill-btn {
+  display: inline-flex; align-items: center; gap: 6px; height: 32px; padding: 0 16px 0 12px;
+  border: 1px solid var(--outline); border-radius: 16px; color: var(--text-2); font-weight: 500;
+}
+.pill-btn:hover { background: var(--hover); }
+.reply-card { display: grid; grid-template-columns: 60px minmax(0, 1fr); padding: 12px 16px 0 0; }
+.reply-card > .avatar { justify-self: center; }
+.rc-box { border-radius: 12px; box-shadow: var(--shadow-2); background: var(--elevated); display: flex; flex-direction: column; }
+.rc-to { display: flex; align-items: center; gap: 6px; padding: 8px 10px; color: var(--text-2); font-size: 13px; }
+.person-chip { display: inline-flex; align-items: center; height: 24px; padding: 0 10px; border-radius: 12px; background: color-mix(in srgb, var(--text-3) 14%, var(--elevated)); color: var(--text); }
+.rc-box textarea { border: 0; outline: none; background: none; resize: vertical; min-height: 104px; padding: 2px 14px; line-height: 22px; }
+.foot { display: flex; align-items: center; gap: 0; padding: 6px 10px 8px; flex-wrap: wrap; }
+.foot .icon-btn { width: 30px; height: 30px; }
+.foot .icon-btn.on { color: var(--accent-ink); background: color-mix(in srgb, var(--accent-ink) 14%, transparent); }
+.btn-primary { height: 32px; padding: 0 20px; border-radius: 16px; background: var(--btn-bg); color: var(--on-accent); font-weight: 600; margin-right: 8px; }
+.btn-primary:hover, .send-split button:hover { box-shadow: var(--shadow-1); filter: brightness(1.06); }
+
+/* ------------------------------------------------------------ composer ---- */
+.composer {
+  position: fixed; right: 12px; bottom: 0; z-index: 30; width: min(520px, calc(100vw - 24px)); height: min(500px, calc(100dvh - 72px));
+  background: var(--elevated); border-radius: 16px 16px 0 0; box-shadow: var(--shadow-3);
+  display: flex; flex-direction: column; overflow: hidden;
+}
+.composer.min { height: 36px; width: 264px; }
+.composer.max { inset: 6vh 8vw; width: auto; height: auto; border-radius: 16px; z-index: 36; }
+.c-head { display: flex; align-items: center; height: 36px; padding: 0 4px 0 14px; background: var(--composer-head); font-weight: 600; flex: none; }
+.composer.min .c-head { cursor: pointer; }
+.c-head .title { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.c-head .icon-btn { width: 26px; height: 26px; }
+.c-head .icon-btn .ms { font-size: 18px; }
+.c-body { display: flex; flex-direction: column; flex: 1; min-height: 0; }
+.composer.min .c-body { display: none; }
+.c-field { display: flex; align-items: center; gap: 8px; margin: 0 14px; border-bottom: 1px solid var(--line); height: 34px; flex: none; }
+.c-field label { color: var(--text-2); }
+.c-field input { flex: 1; min-width: 0; height: 100%; border: 0; outline: none; background: none; }
+.c-field .cc { color: var(--text-2); font-size: 13px; }
+.c-body textarea { flex: 1; border: 0; outline: none; resize: none; background: none; padding: 10px 14px; line-height: 22px; }
+.c-error { margin: 0 14px 4px; color: var(--danger); font-size: 13px; }
+.send-split { display: inline-flex; margin-right: 8px; }
+.send-split .send { height: 32px; padding: 0 14px 0 18px; border-radius: 16px 0 0 16px; background: var(--btn-bg); color: var(--on-accent); font-weight: 600; }
+.send-split .send-more {
+  height: 32px; width: 28px; border-radius: 0 16px 16px 0; background: var(--btn-bg); color: var(--on-accent);
+  display: grid; place-items: center; border-left: 1px solid color-mix(in srgb, var(--on-accent) 30%, transparent);
+}
+.scrim { position: fixed; inset: 0; background: var(--scrim); z-index: 34; }
+
+/* ---------------------------------------------- menus, snackbar, sheet ---- */
+.menu { position: fixed; z-index: 60; min-width: 232px; max-width: 320px; background: var(--elevated); border-radius: 8px; box-shadow: var(--shadow-3); padding: 6px 0; }
+.menu-title { padding: 4px 14px 4px; font-size: 12px; font-weight: 600; color: var(--text-3); }
+.menu-item { display: flex; align-items: center; gap: 10px; width: 100%; height: 32px; padding: 0 14px; text-align: left; color: var(--text); }
+.menu-item:hover, .menu-item:focus-visible { background: var(--hover); outline: none; }
+.menu-item .ms { color: var(--text-2); }
+.mi-label { flex: 1; }
+.mi-hint { font-size: 12px; color: var(--text-3); }
+.menu-sep { height: 1px; background: var(--line); margin: 6px 0; }
+
+.snackbar {
+  position: fixed; left: 16px; bottom: 16px; z-index: 70; display: flex; align-items: center; gap: 4px;
+  min-height: 44px; max-width: min(560px, calc(100vw - 48px)); padding: 4px 4px 4px 14px; border-radius: 8px;
+  background: var(--snack-bg); color: var(--snack-text); box-shadow: var(--shadow-2);
+}
+.snackbar > span { flex: 1; padding: 6px 8px 6px 0; }
+.snack-btn { height: 36px; padding: 0 12px; border-radius: 4px; color: var(--snack-action); font-weight: 600; white-space: nowrap; }
+.snack-btn:hover { background: color-mix(in srgb, var(--snack-text) 10%, transparent); }
+.snackbar .icon-btn { color: var(--snack-text); width: 36px; height: 36px; }
+.snackbar .icon-btn:hover { background: color-mix(in srgb, var(--snack-text) 10%, transparent); }
+
+.settings {
+  position: fixed; top: 60px; right: 12px; z-index: 50; width: 300px; max-height: calc(100dvh - 72px); overflow: auto;
+  background: var(--elevated); border-radius: 16px; box-shadow: var(--shadow-3); padding: 8px 12px 20px;
+}
+.settings header { display: flex; align-items: center; justify-content: space-between; padding-left: 8px; }
+.settings h2 { font-size: 16px; font-weight: 600; margin: 0; }
+.settings h3 { font-size: 12px; font-weight: 600; color: var(--text-3); margin: 12px 8px 2px; }
+.opt { display: flex; align-items: center; gap: 10px; width: 100%; height: 34px; padding: 0 8px; border-radius: 8px; text-align: left; }
+.opt:hover { background: var(--hover); }
+.opt .ms { color: var(--text-3); }
+.opt.on .ms { color: var(--accent-ink); font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 20; }
+.opt .hint { margin-left: auto; font-size: 12px; color: var(--text-3); }
+.swatches { display: flex; gap: 12px; flex-wrap: wrap; padding: 8px; }
+.swatch { width: 32px; height: 32px; border-radius: 50%; background: var(--sw); display: grid; place-items: center; color: #fff; }
+.swatch.on { outline: 2px solid var(--sw); outline-offset: 3px; }
+.settings .note { font-size: 12px; line-height: 18px; color: var(--text-3); margin: 4px 8px 0; }
+.settings code { font-size: 11.5px; padding: 1px 4px; border-radius: 4px; background: var(--hover); }
+
+.fab {
+  display: none; position: fixed; right: 12px; bottom: 12px; z-index: 20; height: 48px; padding: 0 18px 0 14px;
+  border-radius: 14px; background: var(--compose-bg); box-shadow: var(--shadow-2); align-items: center; gap: 12px; font-weight: 600;
+}
+
+/* --------------------------------------------------------------- phone ---- */
+@media (max-width: 760px) {
+  .app { grid-template-columns: minmax(0, 1fr); }
+  .rail { display: none; }
+  .sidebar {
+    position: fixed; top: 0; bottom: 0; left: 0; z-index: 40; width: min(300px, 85vw);
+    background: var(--bg); padding: 16px 16px 16px 0; transform: translateX(-102%); transition: transform .2s;
+  }
+  .app.drawer .sidebar { transform: none; box-shadow: var(--shadow-3); }
+  .sidebar .compose { display: none; }
+  .app.collapsed .nav-item { width: 100%; padding: 0 12px 0 26px; justify-content: flex-start; border-radius: 0 16px 16px 0; margin: 0; }
+  .app.collapsed .nav-item .label, .app.collapsed .nav-item .count { display: block; }
+  .app.collapsed .nav-head { display: flex; }
+  .topbar { padding: 6px; gap: 2px; }
+  .tb-left { width: auto; }
+  .brand { display: none; }
+  .tb-right .icon-btn { display: none; }
+  .panel { grid-column: 1; margin: 0 6px 6px; }
+  .row {
+    grid-template-columns: 46px minmax(0, 1fr) auto; grid-template-areas: "av from end" "av content content";
+    align-items: start; padding: 8px 10px 8px 2px; row-gap: 1px;
+  }
+  .row > .sel, .row > .star { display: none; }
+  .row-avatar { display: grid; grid-area: av; justify-self: center; width: 36px; height: 36px; font-size: 14px; }
+  .row .from { grid-area: from; padding-left: 4px; }
+  .row .content { grid-area: content; padding: 0 4px; }
+  .row .line { display: block; }
+  .row .subject { display: block; max-width: 100%; }
+  .row .snippet { display: block; white-space: nowrap; }
+  .row .snippet .dash { display: none; }
+  .row .end { grid-area: end; min-width: 0; }
+  .row:hover .date { display: inline; }
+  .actions { display: none !important; }
+  .att-line { grid-area: auto; grid-column: 2 / 4; grid-row: 3; padding: 4px 4px 0; }
+  .fab { display: inline-flex; }
+  .composer, .composer.max { inset: 0; width: auto; height: auto; border-radius: 0; }
+  .composer.min { inset: auto 6px 0 auto; width: 232px; height: 36px; border-radius: 14px 14px 0 0; }
+  .t-head { padding: 10px 6px 8px 12px; }
+  .msg { grid-template-columns: 48px minmax(0, 1fr); padding-right: 10px; }
+  .notice { margin: 0 10px 10px; }
+  .reply-row { padding: 12px 10px 0 48px; }
+  .reply-card { grid-template-columns: 48px minmax(0, 1fr); padding-right: 10px; }
+  .c-line .name { width: auto; }
+  .c-line .snippet { display: none; }
+  .toolbar .pager { display: none; }
+  .snackbar { left: 6px; right: 6px; bottom: 72px; max-width: none; }
+  .settings { left: 6px; right: 6px; width: auto; top: 56px; }
+}
+</style>
+</head>
+<body>
+<div class="app" id="app">
+  <header class="topbar">
+    <div class="tb-left">
+      <button class="icon-btn" data-action="toggle-sidebar" aria-label="Main menu" title="Main menu"><span class="ms" aria-hidden="true">menu</span></button>
+      <div class="brand">
+        <svg width="26" height="26" viewBox="0 0 32 32" aria-hidden="true">
+          <rect x="2" y="6" width="28" height="20" rx="6" fill="var(--accent-ink)"/>
+          <path d="M7 12l9 6.2L25 12" stroke="var(--panel)" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <span>Mailspring</span>
+        <span class="brand-tag">Design preview</span>
+      </div>
+    </div>
+    <label class="search">
+      <button class="icon-btn" type="button" data-action="focus-search" aria-label="Search" title="Search"><span class="ms" aria-hidden="true">search</span></button>
+      <input id="search" type="search" placeholder="Search mail" aria-label="Search mail" autocomplete="off">
+      <button class="icon-btn" type="button" data-action="clear-search" aria-label="Clear search" title="Clear search" hidden id="clear-search"><span class="ms" aria-hidden="true">close</span></button>
+      <button class="icon-btn" type="button" data-action="note" data-msg="Search options aren't part of this mock-up." aria-label="Show search options" title="Show search options"><span class="ms" aria-hidden="true">tune</span></button>
+    </label>
+    <div class="tb-right">
+      <button class="icon-btn" data-action="note" data-msg="Help isn't part of this mock-up." aria-label="Help" title="Help"><span class="ms" aria-hidden="true">help</span></button>
+      <button class="icon-btn" data-action="settings" aria-label="Quick settings" title="Quick settings"><span class="ms" aria-hidden="true">settings</span></button>
+      <button class="avatar" data-action="note" data-msg="Signed in as Wanjiru Kamau (sample account)." aria-label="Account" title="Wanjiru Kamau">WK</button>
+    </div>
+  </header>
+
+  <nav class="rail" aria-label="Apps">
+    <button class="rail-item active" data-action="rail" data-app="Mail"><span class="pill"><span class="ms" aria-hidden="true">mail</span><span class="badge" id="rail-badge"></span></span>Mail</button>
+    <button class="rail-item" data-action="rail" data-app="Calendar"><span class="pill"><span class="ms" aria-hidden="true">calendar_month</span></span>Calendar</button>
+    <button class="rail-item" data-action="rail" data-app="Contacts"><span class="pill"><span class="ms" aria-hidden="true">contacts</span></span>Contacts</button>
+    <button class="rail-item" data-action="rail" data-app="Activity"><span class="pill"><span class="ms" aria-hidden="true">monitoring</span></span>Activity</button>
+  </nav>
+
+  <aside class="sidebar" id="sidebar" aria-label="Folders"></aside>
+  <main class="panel" id="panel"></main>
+</div>
+
+<button class="fab" data-action="compose"><span class="ms" aria-hidden="true">edit</span>Compose</button>
+<div class="scrim" id="scrim" data-action="scrim" hidden></div>
+<div id="composer-root"></div>
+
+<section class="settings" id="settings" aria-label="Quick settings" hidden>
+  <header><h2>Quick settings</h2><button class="icon-btn" data-action="settings" aria-label="Close quick settings"><span class="ms" aria-hidden="true">close</span></button></header>
+  <h3>Theme</h3>
+  <div id="opt-theme"></div>
+  <h3>Density</h3>
+  <div id="opt-density"></div>
+  <h3>Accent colour</h3>
+  <div class="swatches" id="opt-accent"></div>
+  <p class="note">Every tint in this design is mixed from one variable, <code>--accent</code>, at the top of the file, so any brand colour drops in.</p>
+</section>
+
+<div class="snackbar" id="snackbar" role="status" aria-live="polite" hidden></div>
+
+<script>
+// ------------------------------------------------------------------ data --
+const ME = { name: 'Wanjiru Kamau', first: 'Wanjiru', email: 'wanjiru@kijanistudio.example' };
+const LABELS = { Clients: '#188038', Invoices: '#b06000', Travel: '#007b83', Newsletters: '#8430ce' };
+const FOLDERS = [
+  { id: 'inbox', name: 'Inbox', icon: 'inbox' },
+  { id: 'starred', name: 'Starred', icon: 'star' },
+  { id: 'snoozed', name: 'Snoozed', icon: 'schedule' },
+  { id: 'reminders', name: 'Reminders', icon: 'notifications' },
+  { id: 'sent', name: 'Sent', icon: 'send' },
+  { id: 'drafts', name: 'Drafts', icon: 'draft' },
+  { id: 'all', name: 'All Mail', icon: 'stacks' },
+  { id: 'spam', name: 'Spam', icon: 'report' },
+  { id: 'bin', name: 'Bin', icon: 'delete' },
+];
+
+const m = (from, email, time, body, extra = {}) => ({ from, email, time, body, to: 'me', ...extra });
+const mine = (to, time, body, extra = {}) => ({ from: ME.name, email: ME.email, time, body, to, mine: true, ...extra });
+
+let threads = [
+  { id: 't1', folder: 'inbox', unread: true, starred: false, labels: ['Clients'], date: '9:14 AM', from: 'Otieno, me', count: 3,
+    subject: 'Q4 partner review: agenda and pre-read',
+    snippet: "Thanks both. I've attached the pre-read; the numbers on page 4 are provisional until finance signs off.",
+    att: [{ name: 'Q4-partner-review.pdf', kind: 'pdf', size: '2.4 MB' }],
+    messages: [
+      m('Otieno Ochieng', 'otieno@harbourline.example', 'Mon, Nov 16, 4:02 PM', ['Hi Wanjiru,', 'Can we lock the Q4 partner review for Thursday at 10? I\'d like to cover the pipeline, the two open proposals and hiring for January.', 'Otieno']),
+      mine('Otieno', 'Mon, Nov 16, 5:20 PM', ['Thursday at 10 works. I\'ll bring the proposal status and a short note on the Kijani website.', 'Wanjiru']),
+      m('Otieno Ochieng', 'otieno@harbourline.example', '9:14 AM (2 hours ago)', ["Thanks both. I've attached the pre-read; the numbers on page 4 are provisional until finance signs off on Wednesday.", 'See you Thursday,', 'Otieno'], { att: true }),
+    ] },
+  { id: 't2', folder: 'inbox', unread: true, starred: false, labels: ['Travel'], date: '8:02 AM', from: 'Savanna Air',
+    subject: 'Your itinerary: NBO to MBA, Fri 20 Nov',
+    snippet: 'Booking ref KQ7H2M. Check-in opens 24 hours before departure. Bag allowance: 1 × 23 kg.',
+    messages: [m('Savanna Air', 'bookings@savannaair.example', '8:02 AM (3 hours ago)', ['Hello Wanjiru,', 'Your booking is confirmed. Reference KQ7H2M.', 'Nairobi (NBO) 07:40 → Mombasa (MBA) 08:45, Friday 20 November. Seat 4A.', 'Check-in opens 24 hours before departure. Bag allowance: 1 × 23 kg.'])] },
+  { id: 't3', folder: 'inbox', unread: false, starred: true, labels: ['Clients'], date: '7:41 AM', from: 'Amina, me', count: 2,
+    subject: 'Logo options for the co-op launch',
+    snippet: 'Option B reads best at small sizes. I tried it on the membership card and the shop sign.',
+    att: [{ name: 'logo-option-a.png', kind: 'img', size: '640 KB' }, { name: 'logo-option-b.png', kind: 'img', size: '702 KB' }],
+    messages: [
+      mine('Amina', 'Mon, Nov 16, 2:10 PM', ['Hi Amina, here are the two directions from Friday. Which one feels closer to the co-op?']),
+      m('Amina Hassan', 'amina@kijanicoop.example', '7:41 AM (4 hours ago)', ['Option B reads best at small sizes. I tried it on the membership card and the shop sign, and the leaf still holds up.', 'Can we see it in the darker green?', 'Amina'], { att: true }),
+    ] },
+  { id: 't4', folder: 'inbox', unread: false, starred: false, labels: ['Invoices'], date: 'Nov 16', from: 'Ledgerline Billing',
+    subject: 'Invoice INV-2048 is ready',
+    snippet: 'Amount due KES 48,500 by 30 Nov. Pay by bank transfer or card from the invoice page.',
+    att: [{ name: 'INV-2048.pdf', kind: 'pdf', size: '88 KB' }],
+    messages: [m('Ledgerline Billing', 'billing@ledgerline.example', 'Mon, Nov 16, 11:30 AM', ['Invoice INV-2048 for Kijani Studio is ready.', 'Amount due: KES 48,500 by 30 November.', 'You can pay by bank transfer or card from the invoice page.'], { att: true })] },
+  { id: 't5', folder: 'inbox', unread: true, starred: false, labels: [], date: 'Nov 16', from: 'Brian Mwangi',
+    subject: 'Lunch Thursday?',
+    snippet: "I'm near Westlands after 1. That Ethiopian place, or somewhere quieter if you need to talk shop.",
+    messages: [m('Brian Mwangi', 'brian.mwangi@example.com', 'Mon, Nov 16, 10:05 AM', ["Hey! I'm near Westlands after 1 on Thursday. That Ethiopian place, or somewhere quieter if you need to talk shop?", 'B'])] },
+  { id: 't6', folder: 'inbox', unread: false, starred: false, labels: ['Newsletters'], date: 'Nov 16', from: 'Figure Weekly',
+    subject: 'Issue 112: Designing calm interfaces',
+    snippet: 'Why fewer colours make busy screens easier to scan, plus three inbox redesigns we liked this month.',
+    messages: [m('Figure Weekly', 'hello@figureweekly.example', 'Mon, Nov 16, 6:00 AM', ['This week: why fewer colours make busy screens easier to scan.', 'Plus three inbox redesigns we liked this month, and a short guide to density settings.'])] },
+  { id: 't7', folder: 'inbox', unread: false, starred: false, labels: ['Clients'], date: 'Nov 15', from: 'Kijani Co-op',
+    subject: "Minutes from Saturday's members meeting",
+    snippet: 'Agreed: website launch on 1 December, new price list from January, and a stall at the Christmas market.',
+    att: [{ name: 'Minutes-14-Nov.docx', kind: 'doc', size: '31 KB' }],
+    messages: [m('Kijani Co-op', 'secretary@kijanicoop.example', 'Sun, Nov 15, 7:12 PM', ['Dear members,', 'Agreed on Saturday: website launch on 1 December, new price list from January, and a stall at the Christmas market.', 'Full minutes attached.'], { att: true })] },
+  { id: 't8', folder: 'inbox', unread: false, starred: true, labels: ['Clients'], date: 'Nov 15', from: 'Achieng, me', count: 4,
+    subject: 'Contract draft v3',
+    snippet: "Clause 7 now caps revisions at two rounds. If that's fine I'll send it for signature tomorrow.",
+    messages: [
+      m('Achieng Odhiambo', 'achieng@odhiambolegal.example', 'Thu, Nov 12, 9:40 AM', ['Wanjiru, draft v2 attached with your comments addressed.']),
+      mine('Achieng', 'Thu, Nov 12, 3:15 PM', ['Thanks. Could we cap revisions so the scope stays clear?']),
+      m('Achieng Odhiambo', 'achieng@odhiambolegal.example', 'Fri, Nov 13, 10:02 AM', ['Good idea, adding that now.']),
+      m('Achieng Odhiambo', 'achieng@odhiambolegal.example', 'Sun, Nov 15, 4:48 PM', ["Clause 7 now caps revisions at two rounds. If that's fine I'll send it for signature tomorrow.", 'Achieng']),
+    ] },
+  { id: 't9', folder: 'inbox', unread: false, starred: false, labels: ['Travel'], date: 'Nov 14', from: 'Nairobi Design Week',
+    subject: 'Speaker confirmation and schedule',
+    snippet: "You're on stage 2 at 14:30 on Saturday. Please send slides by Wednesday so we can test the projector.",
+    messages: [m('Nairobi Design Week', 'speakers@nbodesignweek.example', 'Sat, Nov 14, 1:20 PM', ["Thank you for joining us! You're on stage 2 at 14:30 on Saturday.", 'Please send your slides by Wednesday so we can test them on the projector.'])] },
+  { id: 't10', folder: 'inbox', unread: false, starred: false, labels: [], date: 'Nov 13', from: 'Peter Njoroge',
+    subject: 'Quick question about the API keys',
+    snippet: 'Should the staging site use its own keys, or share production ones until launch?',
+    messages: [m('Peter Njoroge', 'peter@devworks.example', 'Fri, Nov 13, 5:55 PM', ['Should the staging site use its own keys, or share production ones until launch? I lean towards separate keys.', 'Peter'])] },
+  { id: 't11', folder: 'inbox', unread: false, starred: false, labels: ['Invoices'], date: 'Nov 12', from: 'Juniper Bank',
+    subject: 'Your statement for October',
+    snippet: 'Your October statement for the account ending 4417 is now available to view and download.',
+    messages: [m('Juniper Bank', 'statements@juniperbank.example', 'Thu, Nov 12, 8:00 AM', ['Your October statement for the account ending 4417 is now available.'])] },
+  { id: 't12', folder: 'inbox', unread: false, starred: false, labels: [], date: 'Nov 10', from: 'Grace Wambui',
+    subject: 'Photos from the offsite',
+    snippet: 'Here are the best ones. The group photo by the lake turned out really well!',
+    att: [{ name: 'lake-group.jpg', kind: 'img', size: '3.1 MB' }, { name: 'workshop.jpg', kind: 'img', size: '2.7 MB' }],
+    messages: [m('Grace Wambui', 'grace@kijanistudio.example', 'Tue, Nov 10, 6:30 PM', ['Here are the best ones. The group photo by the lake turned out really well!', 'Grace'], { att: true })] },
+  { id: 't13', folder: 'snoozed', unread: false, starred: false, labels: [], date: 'Nov 9', from: 'Hostwell',
+    snooze: 'Tomorrow, 8:00 AM', subject: 'Renew your domain names before 30 Nov',
+    snippet: 'kijanistudio.example and 2 other domains expire on 30 November.',
+    messages: [m('Hostwell', 'renewals@hostwell.example', 'Mon, Nov 9, 9:00 AM', ['kijanistudio.example and 2 other domains expire on 30 November.', 'Renew now to keep your websites and email running.'])] },
+  { id: 't14', folder: 'sent', sent: true, unread: false, starred: false, labels: ['Clients'], date: 'Nov 13', from: 'To: Kijani Co-op',
+    reminder: { fired: true, text: 'No reply · 3 days' }, subject: 'Proposal for the Kijani website',
+    snippet: 'Attached is the proposal with two options. Happy to walk through it on a call this week.',
+    att: [{ name: 'Kijani-website-proposal.pdf', kind: 'pdf', size: '1.2 MB' }],
+    messages: [mine('Kijani Co-op', 'Fri, Nov 13, 11:20 AM', ['Dear committee,', 'Attached is the website proposal with two options and a timeline to the 1 December launch.', 'Happy to walk through it on a call this week.', 'Wanjiru'], { att: true })] },
+  { id: 't15', folder: 'sent', sent: true, unread: false, starred: false, labels: [], date: 'Nov 11', from: 'To: Peter Njoroge',
+    subject: 'Staging server access', snippet: 'Added you to the staging server. Your login details are in the password manager.',
+    messages: [mine('Peter Njoroge', 'Wed, Nov 11, 2:00 PM', ['Added you to the staging server. Your login details are in the password manager.'])] },
+  { id: 'd1', folder: 'drafts', draft: true, unread: false, starred: false, labels: [], date: 'Tomorrow, 8:00 AM', from: 'Draft',
+    scheduled: 'Tomorrow, 8:00 AM', to: 'Otieno Ochieng', subject: 'Follow-up: Q4 numbers',
+    snippet: 'Hi Otieno, as promised, here are the updated Q4 numbers with the finance changes.', body: 'Hi Otieno,\n\nAs promised, here are the updated Q4 numbers with the finance changes.\n\nWanjiru',
+    messages: [] },
+  { id: 's1', folder: 'spam', unread: true, starred: false, labels: [], date: 'Nov 14', from: 'Prize Desk',
+    subject: 'Congratulations, you have been selected!!!', snippet: 'Claim your reward today by confirming your details.',
+    messages: [m('Prize Desk', 'winner@prize-desk.example', 'Sat, Nov 14, 3:33 AM', ['Claim your reward today by confirming your details.'])] },
+];
+
+// ----------------------------------------------------------------- state --
+const state = {
+  folder: 'inbox', openId: null, selected: new Set(), query: '', collapsed: false, drawer: false,
+  composer: null, reply: null, expanded: {}, settings: false,
+};
+const prefs = { theme: 'system', density: 'default', accent: '#0b57d0' };
+try { Object.assign(prefs, JSON.parse(localStorage.getItem('clean-mockup-prefs') || '{}')); } catch (e) { /* private mode */ }
+const savePrefs = () => { try { localStorage.setItem('clean-mockup-prefs', JSON.stringify(prefs)); } catch (e) { /* ignore */ } };
+
+// --------------------------------------------------------------- helpers --
+const $ = s => document.querySelector(s);
+const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const icon = (name, cls = '') => `<span class="ms ${cls}" aria-hidden="true">${name}</span>`;
+const btn = (name, action, label, attrs = '', cls = 'icon-btn') =>
+  `<button class="${cls}" data-action="${action}" aria-label="${esc(label)}" title="${esc(label)}" ${attrs}>${icon(name)}</button>`;
+const get = id => threads.find(t => t.id === id);
+const isMobile = () => matchMedia('(max-width: 760px)').matches;
+const nowTime = () => new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+const AV = ['#1a73e8', '#188038', '#b06000', '#8430ce', '#d93025', '#007b83', '#a142f4', '#e37400'];
+const avColor = name => AV[[...name].reduce((h, c) => (h * 31 + c.charCodeAt(0)) >>> 0, 7) % AV.length];
+const initials = name => name.replace(/^To: /, '').split(',')[0].trim().split(/\s+/).map(w => w[0]).slice(0, 2).join('').toUpperCase();
+const avatar = (name, cls = '', isMe = false) =>
+  `<div class="avatar ${cls}" style="--av:${isMe ? 'var(--accent)' : avColor(name)}" aria-hidden="true">${esc(isMe ? 'WK' : initials(name))}</div>`;
+const KIND_ICON = { pdf: 'picture_as_pdf', img: 'image', doc: 'description' };
+
+function inFolder(t, f) {
+  const trashy = ['bin', 'spam'].includes(t.folder);
+  switch (f) {
+    case 'inbox': return t.folder === 'inbox';
+    case 'starred': return t.starred && !trashy;
+    case 'snoozed': return t.folder === 'snoozed';
+    case 'reminders': return !!t.reminder && !trashy;
+    case 'sent': return !!t.sent && !trashy && t.folder !== 'drafts';
+    case 'drafts': return t.folder === 'drafts';
+    case 'all': return !trashy && t.folder !== 'drafts';
+    case 'spam': case 'bin': return t.folder === f;
+    default: return f.startsWith('label:') && t.labels.includes(f.slice(6)) && !trashy;
+  }
+}
+function visible() {
+  const q = state.query.trim().toLowerCase();
+  if (q) return threads.filter(t => !['bin', 'spam'].includes(t.folder) &&
+    `${t.from} ${t.subject} ${t.snippet}`.toLowerCase().includes(q));
+  return threads.filter(t => inFolder(t, state.folder));
+}
+function folderName(f) {
+  if (f.startsWith('label:')) return f.slice(6);
+  return (FOLDERS.find(x => x.id === f) || {}).name || f;
+}
+
+// ---------------------------------------------------------------- render --
+function renderSidebar() {
+  const unreadInbox = threads.filter(t => t.folder === 'inbox' && t.unread).length;
+  const counts = {
+    inbox: unreadInbox || '',
+    drafts: threads.filter(t => t.folder === 'drafts').length || '',
+    spam: threads.filter(t => t.folder === 'spam' && t.unread).length || '',
+    reminders: threads.filter(t => t.reminder && t.reminder.fired && !['bin', 'spam'].includes(t.folder)).length || '',
+  };
+  const item = (id, name, ic, extra = '', count = '') => {
+    const active = !state.query && state.folder === id;
+    const bold = (id === 'inbox' && unreadInbox) || (id === 'spam' && counts.spam) || (id === 'reminders' && counts.reminders);
+    return `<button class="nav-item ${active ? 'active' : ''} ${bold ? 'unread' : ''}" data-action="nav" data-folder="${id}" title="${esc(name)}" ${active ? 'aria-current="page"' : ''}>
+      ${ic}<span class="label">${esc(name)}</span><span class="count">${count}</span></button>`;
+  };
+  $('#sidebar').innerHTML =
+    `<button class="compose" data-action="compose" title="Compose">${icon('edit')}<span class="label">Compose</span></button>` +
+    FOLDERS.map(f => item(f.id, f.name, icon(f.icon), '', counts[f.id] || '')).join('') +
+    `<div class="nav-head"><span>Labels</span>${btn('add', 'note', 'Create new label', 'data-msg="Creating labels isn\'t part of this mock-up."', 'icon-btn sm')}</div>` +
+    Object.entries(LABELS).map(([n, c]) => item('label:' + n, n, `<span class="ms lbl" style="--lc:${c}" aria-hidden="true">label</span>`)).join('');
+  const badge = $('#rail-badge');
+  badge.textContent = unreadInbox; badge.hidden = !unreadInbox;
+}
+
+function labelChips(t) {
+  return t.labels.map(l => `<span class="chip" style="--lc:${LABELS[l]}">${esc(l)}</span>`).join('');
+}
+
+function rowHTML(t) {
+  const sel = state.selected.has(t.id);
+  const isDraft = t.folder === 'drafts';
+  const from = isDraft ? `<span class="draft-tag">Draft</span>` :
+    `${esc(t.from)}${t.count ? `<span class="n">${t.count}</span>` : ''}`;
+  let chips = '';
+  if (t.scheduled) chips += `<span class="chip info">${icon('schedule_send')}Scheduled</span>`;
+  if (t.reminder) chips += t.reminder.fired
+    ? `<span class="chip warn">${icon('notifications_active')}${esc(t.reminder.text)}</span>`
+    : `<span class="chip info">${icon('notifications')}${esc(t.reminder.text)}</span>`;
+  if (state.folder !== 'inbox' && t.folder === 'inbox' && (state.query || state.folder === 'all' || state.folder === 'starred')) chips += `<span class="chip">Inbox</span>`;
+  chips += labelChips(t);
+  const date = t.folder === 'snoozed' && t.snooze ? `<span class="date accent">${esc(t.snooze)}</span>`
+    : t.scheduled ? `<span class="date accent">${esc(t.scheduled)}</span>` : `<span class="date">${esc(t.date)}</span>`;
+  const actions = isDraft ? btn('delete', 'discard-draft', 'Discard draft', `data-id="${t.id}"`, 'icon-btn sm') :
+    btn('archive', 'archive', 'Archive', `data-id="${t.id}"`, 'icon-btn sm') +
+    btn('delete', 'delete', 'Delete', `data-id="${t.id}"`, 'icon-btn sm') +
+    btn(t.unread ? 'drafts' : 'mark_email_unread', 'toggle-read', t.unread ? 'Mark as read' : 'Mark as unread', `data-id="${t.id}"`, 'icon-btn sm') +
+    btn('schedule', 'snooze', 'Snooze', `data-id="${t.id}"`, 'icon-btn sm');
+  const att = t.att && t.att.length ? `<div class="att-line">${t.att.map(a =>
+    `<span class="att-chip">${icon(KIND_ICON[a.kind], 'k-' + a.kind)}<span>${esc(a.name)}</span></span>`).join('')}</div>` : '';
+  return `<div class="row ${t.unread ? 'unread' : ''} ${sel ? 'selected' : ''} ${att ? 'has-att' : ''}" data-action="open" data-id="${t.id}" tabindex="0" role="listitem">
+    ${btn(sel ? 'check_box' : 'check_box_outline_blank', 'select', sel ? 'Deselect' : 'Select', `data-id="${t.id}"`, 'icon-btn sm sel')}
+    ${btn('star', 'star', t.starred ? 'Starred' : 'Not starred', `data-id="${t.id}"`, `icon-btn sm star ${t.starred ? 'on' : ''}`)}
+    ${avatar(isDraft ? ME.name : t.from, 'row-avatar', isDraft || !!t.sent)}
+    <div class="from">${from}</div>
+    <div class="content"><div class="line">${chips}<span class="subject">${esc(t.subject || '(no subject)')}</span><span class="snippet">${t.snippet ? `<span class="dash">— </span>${esc(t.snippet)}` : ''}</span></div></div>
+    <div class="end">${date}<div class="actions">${actions}</div></div>
+    ${att}
+  </div>`;
+}
+
+function renderList() {
+  const list = visible();
+  const ids = list.map(t => t.id);
+  const nSel = ids.filter(id => state.selected.has(id)).length;
+  const allIcon = !nSel ? 'check_box_outline_blank' : nSel === ids.length ? 'check_box' : 'indeterminate_check_box';
+  const anyUnread = list.some(t => state.selected.has(t.id) && t.unread);
+  const bulk = nSel
+    ? btn('archive', 'archive', 'Archive') + btn('report', 'spam', 'Report spam') + btn('delete', 'delete', 'Delete') +
+      '<span class="sep"></span>' + btn(anyUnread ? 'drafts' : 'mark_email_unread', 'toggle-read', anyUnread ? 'Mark as read' : 'Mark as unread') +
+      btn('schedule', 'snooze', 'Snooze')
+    : btn('refresh', 'refresh', 'Refresh') + btn('more_vert', 'list-more', 'More');
+  const empty = {
+    inbox: ['inbox', 'You\'re all done', 'Nothing in your inbox. Enjoy your day.'],
+    snoozed: ['schedule', 'Nothing snoozed', 'Snoozed conversations come back to your inbox at the time you pick.'],
+    reminders: ['notifications', 'No reminders', 'Set a reminder when you send, and it shows up here if nobody replies.'],
+    drafts: ['draft', 'No drafts', 'Messages you haven\'t sent yet are saved here.'],
+    bin: ['delete', 'Bin is empty', 'Deleted conversations stay here for 30 days.'],
+    spam: ['report', 'Hooray, no spam here!', ''],
+  }[state.folder] || ['search', 'No conversations', state.query ? 'Try different words.' : ''];
+  return `<div class="toolbar">
+      ${list.length ? btn(allIcon, 'select-all', nSel ? 'Deselect all' : 'Select all') : ''}${bulk}
+      <span class="spacer"></span>
+      <span class="pager">${list.length ? `1–${list.length} of ${list.length}` : ''}</span>
+      ${btn('chevron_left', 'noop', 'Newer', 'disabled')}${btn('chevron_right', 'noop', 'Older', 'disabled')}
+    </div>
+    <div class="scroll" id="scroll">
+      ${state.query ? `<div class="results">Results for “${esc(state.query)}” in all mail</div>` : ''}
+      ${list.length ? `<div role="list" aria-label="${esc(folderName(state.folder))}">${list.map(rowHTML).join('')}</div>`
+        : `<div class="empty">${icon(empty[0])}<strong>${empty[1]}</strong><span>${empty[2]}</span></div>`}
+    </div>`;
+}
+
+function messageHTML(t, msg, i, last) {
+  const expanded = state.expanded[t.id] ? state.expanded[t.id].has(i) : (last || (t.unreadOnOpen && i === t.messages.length - 1));
+  const name = msg.mine ? ME.name : msg.from;
+  if (!expanded) {
+    return `<button class="msg collapsed" data-action="expand" data-id="${t.id}" data-idx="${i}">
+      ${avatar(name, '', msg.mine)}
+      <div class="c-line"><span class="name">${esc(msg.mine ? 'me' : msg.from)}</span><span class="snippet">${esc(msg.body.join(' '))}</span><span class="time">${esc(msg.time.replace(/ \(.*\)/, ''))}</span></div>
+    </button>`;
+  }
+  const atts = msg.att && t.att ? `<div class="att-cards">${t.att.map(a =>
+    `<button class="att-card" data-action="note" data-msg="Opening attachments isn't part of this mock-up.">
+      <div class="prev">${icon(KIND_ICON[a.kind], 'k-' + a.kind)}</div>
+      <div class="cap">${icon(KIND_ICON[a.kind], 'k-' + a.kind)}<span class="nm">${esc(a.name)}</span><span class="sz">${esc(a.size)}</span></div>
+    </button>`).join('')}</div>` : '';
+  return `<article class="msg">
+    ${avatar(name, 'lg', msg.mine)}
+    <div>
+      <div class="msg-head">
+        <div class="who">
+          <span class="name">${esc(name)}</span> <span class="email">&lt;${esc(msg.email)}&gt;</span>
+          <div class="to">to ${esc(msg.to)}${icon('arrow_drop_down')}</div>
+        </div>
+        <div class="meta"><span class="time">${esc(msg.time)}</span>
+          ${btn('star', 'star', t.starred ? 'Starred' : 'Not starred', `data-id="${t.id}"`, `icon-btn sm star ${t.starred ? 'on' : ''}`)}
+          ${btn('reply', 'reply', 'Reply', `data-id="${t.id}" data-mode="reply"`, 'icon-btn sm')}
+          ${btn('more_vert', 'msg-more', 'More', `data-id="${t.id}"`, 'icon-btn sm')}
+        </div>
+      </div>
+      <div class="msg-body">${msg.body.map(p => `<p>${esc(p)}</p>`).join('')}</div>
+      ${atts}
+    </div>
+  </article>`;
+}
+
+function renderThread() {
+  const t = get(state.openId);
+  const list = visible();
+  const idx = list.findIndex(x => x.id === t.id);
+  const chips = [];
+  if (t.folder === 'inbox') chips.push(`<span class="chip t-chip">Inbox<button data-action="archive" data-id="${t.id}" aria-label="Remove Inbox label" title="Archive">${icon('close')}</button></span>`);
+  if (t.folder === 'snoozed') chips.push(`<span class="chip t-chip info">Snoozed</span>`);
+  t.labels.forEach(l => chips.push(`<span class="chip t-chip" style="--lc:${LABELS[l]}">${esc(l)}<button data-action="remove-label" data-id="${t.id}" data-label="${esc(l)}" aria-label="Remove label ${esc(l)}" title="Remove label">${icon('close')}</button></span>`));
+  const notices = [];
+  if (t.reminder && t.reminder.fired) notices.push(`<div class="notice">${icon('notifications_active')}<div class="grow"><strong>No reply in 3 days.</strong> You asked to be reminded about this conversation.</div><button class="text-btn" data-action="dismiss-reminder" data-id="${t.id}">Dismiss</button></div>`);
+  if (t.reminder && !t.reminder.fired) notices.push(`<div class="notice info">${icon('notifications')}<div class="grow">${esc(t.reminder.text)} if nobody replies.</div><button class="text-btn" data-action="dismiss-reminder" data-id="${t.id}">Cancel reminder</button></div>`);
+  if (t.folder === 'snoozed') notices.push(`<div class="notice info">${icon('schedule')}<div class="grow">Snoozed until <strong>${esc(t.snooze)}</strong>. It will come back to your inbox then.</div><button class="text-btn" data-action="unsnooze" data-id="${t.id}">Unsnooze</button></div>`);
+  const lastFrom = [...t.messages].reverse().find(x => !x.mine);
+  const replyTo = lastFrom ? lastFrom.from : (t.messages[0] || {}).to || '';
+  const multi = new Set(t.messages.filter(x => !x.mine).map(x => x.from)).size > 1;
+  let reply;
+  if (state.reply && state.reply.id === t.id) {
+    const verb = { reply: 'reply', all: 'reply_all', forward: 'forward' }[state.reply.mode];
+    const to = state.reply.mode === 'forward' ? '' : `<span class="person-chip">${esc(replyTo)}</span>`;
+    reply = `<div class="reply-card">${avatar(ME.name, 'lg', true)}<div class="rc-box">
+      <div class="rc-to">${icon(verb)}${to}${state.reply.mode === 'forward' ? '<input id="fwd-to" placeholder="Recipients" style="border:0;outline:none;background:none;flex:1">' : ''}</div>
+      <textarea id="reply-text" aria-label="Message body">${esc(state.reply.text || '')}</textarea>
+      <div class="foot"><button class="btn-primary" data-action="r-send">Send</button>
+        ${btn('format_color_text', 'note', 'Formatting options', 'data-msg="Formatting isn\'t part of this mock-up."')}
+        ${btn('attach_file', 'note', 'Attach files', 'data-msg="Attaching files isn\'t part of this mock-up."')}
+        ${btn('link', 'note', 'Insert link', 'data-msg="Links aren\'t part of this mock-up."')}
+        ${btn('mood', 'note', 'Insert emoji', 'data-msg="Emoji aren\'t part of this mock-up."')}
+        <span class="spacer"></span>${btn('delete', 'r-discard', 'Discard reply')}</div>
+    </div></div>`;
+  } else if (t.folder !== 'drafts') {
+    reply = `<div class="reply-row">
+      <button class="pill-btn" data-action="reply" data-id="${t.id}" data-mode="reply">${icon('reply')}Reply</button>
+      ${multi ? `<button class="pill-btn" data-action="reply" data-id="${t.id}" data-mode="all">${icon('reply_all')}Reply all</button>` : ''}
+      <button class="pill-btn" data-action="reply" data-id="${t.id}" data-mode="forward">${icon('forward')}Forward</button>
+    </div>`;
+  }
+  return `<div class="toolbar">
+      ${btn('arrow_back', 'back', `Back to ${folderName(state.folder)}`)}
+      ${t.folder === 'snoozed' ? btn('inbox', 'unsnooze', 'Move to inbox', `data-id="${t.id}"`) : btn('archive', 'archive', 'Archive', `data-id="${t.id}"`)}
+      ${btn('report', 'spam', 'Report spam', `data-id="${t.id}"`)}${btn('delete', 'delete', 'Delete', `data-id="${t.id}"`)}
+      <span class="sep"></span>
+      ${btn('mark_email_unread', 'mark-unread', 'Mark as unread', `data-id="${t.id}"`)}
+      ${btn('schedule', 'snooze', 'Snooze', `data-id="${t.id}"`)}
+      ${btn(t.reminder ? 'notifications_active' : 'notifications', 'remind', 'Remind me if no reply', `data-id="${t.id}"`)}
+      <span class="sep"></span>
+      ${btn('label', 'label-menu', 'Labels', `data-id="${t.id}"`)}${btn('more_vert', 'msg-more', 'More', `data-id="${t.id}"`)}
+      <span class="spacer"></span>
+      <span class="pager">${idx >= 0 ? `${idx + 1} of ${list.length}` : ''}</span>
+      ${btn('chevron_left', 'prev', 'Newer', idx <= 0 ? 'disabled' : '')}${btn('chevron_right', 'next', 'Older', idx < 0 || idx >= list.length - 1 ? 'disabled' : '')}
+    </div>
+    <div class="scroll" id="scroll"><div class="thread">
+      <div class="t-head"><div class="t-title"><h1>${esc(t.subject)}</h1>${chips.join('')}</div>
+        ${btn('print', 'note', 'Print all', 'data-msg="Printing isn\'t part of this mock-up."')}${btn('open_in_new', 'note', 'In new window', 'data-msg="Pop-out windows aren\'t part of this mock-up."')}</div>
+      ${notices.join('')}
+      ${t.messages.map((msg, i) => messageHTML(t, msg, i, i === t.messages.length - 1)).join('')}
+      ${reply || ''}
+    </div></div>`;
+}
+
+let lastView = '';
+function render({ keepScroll = true } = {}) {
+  renderSidebar();
+  const view = state.openId ? 'thread:' + state.openId : 'list:' + state.folder + ':' + state.query;
+  const sc = $('#scroll');
+  const top = keepScroll && view === lastView && sc ? sc.scrollTop : 0;
+  $('#panel').innerHTML = state.openId ? renderThread() : renderList();
+  if ($('#scroll')) $('#scroll').scrollTop = top;
+  lastView = view;
+  $('#app').classList.toggle('collapsed', state.collapsed);
+  $('#app').classList.toggle('drawer', state.drawer);
+  syncScrim();
+}
+
+// --------------------------------------------------------------- composer --
+function openComposer(init = {}) {
+  if (state.composer && (state.composer.to || state.composer.subject || state.composer.body)) saveComposerAsDraft(true);
+  state.composer = { to: '', subject: '', body: '', mode: 'normal', reminder: null, error: '', draftId: null, ...init };
+  renderComposer();
+  setTimeout(() => (state.composer.to ? $('#c-text') : $('#c-to'))?.focus(), 0);
+}
+function renderComposer() {
+  const c = state.composer;
+  const root = $('#composer-root');
+  if (!c) { root.innerHTML = ''; syncScrim(); return; }
+  root.innerHTML = `<section class="composer ${c.mode}" role="dialog" aria-label="${esc(c.subject || 'New message')}">
+    <header class="c-head" data-action="c-head">
+      <span class="title">${esc(c.subject || 'New Message')}</span>
+      ${btn(c.mode === 'min' ? 'expand_less' : 'minimize', 'c-min', c.mode === 'min' ? 'Restore' : 'Minimise')}
+      ${btn(c.mode === 'max' ? 'close_fullscreen' : 'open_in_full', 'c-max', c.mode === 'max' ? 'Exit full screen' : 'Full screen')}
+      ${btn('close', 'c-close', 'Save & close')}
+    </header>
+    <div class="c-body">
+      <div class="c-field"><label for="c-to">To</label><input id="c-to" value="${esc(c.to)}" autocomplete="off"><span class="cc">Cc Bcc</span></div>
+      <div class="c-field"><input id="c-subject" placeholder="Subject" value="${esc(c.subject)}" aria-label="Subject"></div>
+      <textarea id="c-text" aria-label="Message body">${esc(c.body)}</textarea>
+      ${c.error ? `<div class="c-error">${esc(c.error)}</div>` : ''}
+      <footer class="foot">
+        <div class="send-split"><button class="send" data-action="c-send">Send</button><button class="send-more" data-action="c-schedule" aria-label="More send options" title="Schedule send">${icon('arrow_drop_down')}</button></div>
+        ${btn('format_color_text', 'note', 'Formatting options', 'data-msg="Formatting isn\'t part of this mock-up."')}
+        ${btn('attach_file', 'note', 'Attach files', 'data-msg="Attaching files isn\'t part of this mock-up."')}
+        ${btn('link', 'note', 'Insert link', 'data-msg="Links aren\'t part of this mock-up."')}
+        ${btn('mood', 'note', 'Insert emoji', 'data-msg="Emoji aren\'t part of this mock-up."')}
+        ${btn('image', 'note', 'Insert photo', 'data-msg="Photos aren\'t part of this mock-up."')}
+        ${btn(c.reminder ? 'notifications_active' : 'notifications', 'c-remind', c.reminder ? 'Reminder: ' + c.reminder : 'Remind me if no reply', '', `icon-btn ${c.reminder ? 'on' : ''}`)}
+        ${c.reminder ? `<span class="chip info">${esc(c.reminder)}</span>` : ''}
+        <span class="spacer"></span>
+        ${btn('delete', 'c-discard', 'Discard draft')}
+      </footer>
+    </div>
+  </section>`;
+  syncScrim();
+}
+function readComposer() {
+  const c = state.composer; if (!c) return;
+  if ($('#c-to')) { c.to = $('#c-to').value; c.subject = $('#c-subject').value; c.body = $('#c-text').value; }
+}
+function saveComposerAsDraft(silent) {
+  readComposer();
+  const c = state.composer;
+  if (!c || !(c.to.trim() || c.subject.trim() || c.body.trim())) return false;
+  const existing = c.draftId && get(c.draftId);
+  const d = existing || { id: 'd' + Date.now(), folder: 'drafts', draft: true, unread: false, starred: false, labels: [], messages: [], from: 'Draft' };
+  Object.assign(d, { to: c.to, subject: c.subject, body: c.body, snippet: c.body.replace(/\s+/g, ' ').trim(), date: nowTime(), scheduled: c.scheduled || d.scheduled || null });
+  if (!existing) threads.unshift(d);
+  if (!silent) toast('Draft saved.');
+  return true;
+}
+
+// ------------------------------------------------------------------ menus --
+let menu = null;
+function openMenu(anchor, title, items) {
+  closeMenu();
+  const el = document.createElement('div');
+  el.className = 'menu'; el.setAttribute('role', 'menu');
+  el.innerHTML = (title ? `<div class="menu-title">${esc(title)}</div>` : '') + items.map((it, i) => it === '-' ? '<div class="menu-sep"></div>' :
+    `<button class="menu-item" role="menuitem" data-action="menu-item" data-idx="${i}">${it.icon ? icon(it.icon) : ''}<span class="mi-label">${esc(it.label)}</span>${it.hint ? `<span class="mi-hint">${esc(it.hint)}</span>` : ''}</button>`).join('');
+  document.body.appendChild(el);
+  const r = anchor.getBoundingClientRect();
+  let left = r.left, top = r.bottom + 4;
+  if (left + el.offsetWidth > innerWidth - 8) left = Math.max(8, r.right - el.offsetWidth);
+  if (top + el.offsetHeight > innerHeight - 8) top = Math.max(8, r.top - el.offsetHeight - 4);
+  el.style.left = left + 'px'; el.style.top = top + 'px';
+  menu = { el, items };
+  el.querySelector('.menu-item')?.focus();
+}
+function closeMenu() { if (menu) { menu.el.remove(); menu = null; } }
+
+// --------------------------------------------------------------- snackbar --
+let snackTimer, snackUndo, snackView;
+function toast(msg, { undo, view } = {}) {
+  const s = $('#snackbar');
+  snackUndo = undo; snackView = view;
+  s.innerHTML = `<span>${esc(msg)}</span>${undo ? '<button class="snack-btn" data-action="undo">Undo</button>' : ''}${view ? '<button class="snack-btn" data-action="snack-view">View message</button>' : ''}${btn('close', 'snack-close', 'Dismiss')}`;
+  s.hidden = false;
+  clearTimeout(snackTimer);
+  snackTimer = setTimeout(() => { s.hidden = true; }, 7000);
+}
+
+// ---------------------------------------------------------------- actions --
+function targets(id) { return id ? [id] : [...state.selected].filter(x => visible().some(t => t.id === x)); }
+function move(ids, folder, verb) {
+  if (!ids.length) return;
+  const prev = ids.map(id => [id, get(id).folder]);
+  ids.forEach(id => { get(id).folder = folder; });
+  ids.forEach(id => state.selected.delete(id));
+  if (state.openId && ids.includes(state.openId)) state.openId = null;
+  render();
+  toast(`${ids.length > 1 ? ids.length + ' conversations' : 'Conversation'} ${verb}.`, {
+    undo: () => { prev.forEach(([id, f]) => { get(id).folder = f; }); render(); toast('Action undone.'); },
+  });
+}
+const SNOOZE = [
+  { label: 'Later today', hint: '6:00 PM', value: 'Today, 6:00 PM' },
+  { label: 'Tomorrow', hint: 'Wed, 8:00 AM', value: 'Tomorrow, 8:00 AM' },
+  { label: 'This weekend', hint: 'Sat, 8:00 AM', value: 'Sat, 8:00 AM' },
+  { label: 'Next week', hint: 'Mon, 8:00 AM', value: 'Mon, 8:00 AM' },
+];
+function snoozeMenu(anchor, ids) {
+  openMenu(anchor, 'Snooze until…', [
+    ...SNOOZE.map(s => ({ label: s.label, hint: s.hint, icon: 'schedule', run: () => {
+      if (!ids.length) return;
+      const prev = ids.map(id => [id, get(id).folder, get(id).snooze]);
+      ids.forEach(id => Object.assign(get(id), { folder: 'snoozed', snooze: s.value }));
+      ids.forEach(id => state.selected.delete(id));
+      if (state.openId && ids.includes(state.openId)) state.openId = null;
+      render();
+      toast(`Snoozed until ${s.value}.`, { undo: () => { prev.forEach(([id, f, sn]) => Object.assign(get(id), { folder: f, snooze: sn })); render(); toast('Action undone.'); } });
+    } })),
+    '-',
+    { label: 'Pick date & time', icon: 'calendar_month', run: () => toast("The date picker isn't part of this mock-up.") },
+  ]);
+}
+const REMIND = ['in 1 day', 'in 3 days', 'in 1 week'];
+
+const actions = {
+  nav(el) {
+    state.folder = el.dataset.folder; state.openId = null; state.selected.clear(); state.reply = null;
+    state.query = ''; $('#search').value = ''; $('#clear-search').hidden = true;
+    state.drawer = false; render({ keepScroll: false });
+  },
+  'toggle-sidebar'() { if (isMobile()) state.drawer = !state.drawer; else state.collapsed = !state.collapsed; render(); },
+  scrim() {
+    if (state.drawer) { state.drawer = false; render(); }
+    else if (state.composer && state.composer.mode === 'max') { readComposer(); state.composer.mode = 'normal'; renderComposer(); }
+  },
+  rail(el) { if (el.dataset.app !== 'Mail') toast(`${el.dataset.app} isn't part of this mock-up.`); },
+  note(el) { toast(el.dataset.msg); },
+  noop() {},
+  'focus-search'() { $('#search').focus(); },
+  'clear-search'() { state.query = ''; $('#search').value = ''; $('#clear-search').hidden = true; render({ keepScroll: false }); $('#search').focus(); },
+  settings() { state.settings = !state.settings; renderSettings(); },
+  open(el) {
+    const t = get(el.dataset.id);
+    if (t.folder === 'drafts') { openComposer({ to: t.to || '', subject: t.subject || '', body: t.body || '', draftId: t.id, scheduled: t.scheduled }); return; }
+    t.unreadOnOpen = t.unread; t.unread = false;
+    state.openId = t.id; state.reply = null; render({ keepScroll: false });
+  },
+  select(el) { const id = el.dataset.id; state.selected.has(id) ? state.selected.delete(id) : state.selected.add(id); render(); },
+  'select-all'() {
+    const ids = visible().map(t => t.id);
+    const all = ids.every(id => state.selected.has(id));
+    ids.forEach(id => all ? state.selected.delete(id) : state.selected.add(id)); render();
+  },
+  star(el) { const t = get(el.dataset.id); t.starred = !t.starred; render(); },
+  archive(el) { move(targets(el.dataset.id), 'archive', 'archived'); },
+  delete(el) { move(targets(el.dataset.id), 'bin', 'moved to Bin'); },
+  spam(el) { move(targets(el.dataset.id), 'spam', 'reported as spam'); },
+  'toggle-read'(el) {
+    const ids = targets(el.dataset.id);
+    const makeRead = ids.some(id => get(id).unread);
+    ids.forEach(id => { get(id).unread = !makeRead; });
+    render();
+  },
+  'mark-unread'(el) { get(el.dataset.id).unread = true; state.openId = null; render(); toast('Marked as unread.'); },
+  snooze(el) { snoozeMenu(el, targets(el.dataset.id)); },
+  unsnooze(el) { const t = get(el.dataset.id); t.folder = 'inbox'; t.snooze = null; state.openId = null; render(); toast('Moved to Inbox.'); },
+  remind(el) {
+    const t = get(el.dataset.id);
+    openMenu(el, 'Remind me if nobody replies', [
+      ...REMIND.map(r => ({ label: 'Remind me ' + r, icon: 'notifications', run: () => { t.reminder = { fired: false, text: 'Reminder ' + r }; render(); toast(`You'll be reminded ${r} if nobody replies.`); } })),
+      ...(t.reminder ? ['-', { label: 'Cancel reminder', icon: 'notifications_off', run: () => { t.reminder = null; render(); toast('Reminder cancelled.'); } }] : []),
+    ]);
+  },
+  'dismiss-reminder'(el) { get(el.dataset.id).reminder = null; render(); toast('Reminder removed.'); },
+  'remove-label'(el) { const t = get(el.dataset.id); t.labels = t.labels.filter(l => l !== el.dataset.label); render(); toast(`Removed label “${el.dataset.label}”.`); },
+  'label-menu'(el) {
+    const t = get(el.dataset.id);
+    openMenu(el, 'Label as', Object.keys(LABELS).map(l => ({ label: l, icon: t.labels.includes(l) ? 'check_box' : 'check_box_outline_blank', run: () => {
+      t.labels = t.labels.includes(l) ? t.labels.filter(x => x !== l) : [...t.labels, l]; render();
+    } })));
+  },
+  'msg-more'(el) {
+    const id = el.dataset.id;
+    openMenu(el, '', [
+      { label: 'Reply', icon: 'reply', run: () => actions.reply({ dataset: { id, mode: 'reply' } }) },
+      { label: 'Forward', icon: 'forward', run: () => actions.reply({ dataset: { id, mode: 'forward' } }) },
+      '-',
+      { label: 'Mark as unread', icon: 'mark_email_unread', run: () => actions['mark-unread']({ dataset: { id } }) },
+      { label: 'Print', icon: 'print', run: () => toast("Printing isn't part of this mock-up.") },
+    ]);
+  },
+  'list-more'(el) {
+    openMenu(el, '', [
+      { label: 'Mark all as read', icon: 'drafts', run: () => { visible().forEach(t => { t.unread = false; }); render(); toast('All conversations marked as read.'); } },
+    ]);
+  },
+  refresh() { toast('No new mail.'); },
+  back() { state.openId = null; state.reply = null; render({ keepScroll: false }); },
+  prev() { const l = visible(); const i = l.findIndex(t => t.id === state.openId); if (i > 0) actions.open({ dataset: { id: l[i - 1].id } }); },
+  next() { const l = visible(); const i = l.findIndex(t => t.id === state.openId); if (i >= 0 && i < l.length - 1) actions.open({ dataset: { id: l[i + 1].id } }); },
+  expand(el) {
+    const t = get(el.dataset.id);
+    if (!state.expanded[t.id]) state.expanded[t.id] = new Set([t.messages.length - 1]);
+    state.expanded[t.id].add(Number(el.dataset.idx)); render();
+  },
+  reply(el) {
+    state.reply = { id: el.dataset.id, mode: el.dataset.mode, text: '' };
+    render();
+    setTimeout(() => { const ta = $('#reply-text'); if (ta) { ta.focus(); ta.scrollIntoView({ block: 'center', behavior: 'smooth' }); } }, 0);
+  },
+  'r-discard'() { state.reply = null; render(); toast('Reply discarded.'); },
+  'r-send'() {
+    const text = ($('#reply-text').value || '').trim();
+    if (!text) { $('#reply-text').focus(); toast('Write a message before sending.'); return; }
+    const t = get(state.reply.id);
+    const lastFrom = [...t.messages].reverse().find(x => !x.mine);
+    t.messages.push(mine(lastFrom ? lastFrom.from.split(' ')[0] : 'them', nowTime() + ' (just now)', text.split(/\n{2,}/)));
+    if (!state.expanded[t.id]) state.expanded[t.id] = new Set();
+    state.expanded[t.id].add(t.messages.length - 1);
+    t.snippet = text; t.date = nowTime(); t.sent = true; t.count = t.messages.length;
+    if (!/me\b/.test(t.from)) t.from = `${t.from.split(',')[0].split(' ')[0]}, me`;
+    state.reply = null; render();
+    toast('Message sent.');
+  },
+  compose() { openComposer(); },
+  'c-head'() { if (state.composer.mode === 'min') { readComposer(); state.composer.mode = 'normal'; renderComposer(); } },
+  'c-min'() { readComposer(); state.composer.mode = state.composer.mode === 'min' ? 'normal' : 'min'; renderComposer(); },
+  'c-max'() { readComposer(); state.composer.mode = state.composer.mode === 'max' ? 'normal' : 'max'; renderComposer(); },
+  'c-close'() { const saved = saveComposerAsDraft(true); state.composer = null; renderComposer(); render(); if (saved) toast('Draft saved.', { view: () => actions.nav({ dataset: { folder: 'drafts' } }) }); },
+  'c-discard'() {
+    readComposer();
+    const id = state.composer.draftId;
+    if (id) threads = threads.filter(t => t.id !== id);
+    state.composer = null; renderComposer(); render(); toast('Draft discarded.');
+  },
+  'c-remind'(el) {
+    readComposer();
+    openMenu(el, 'Remind me if nobody replies', [
+      ...REMIND.map(r => ({ label: 'Remind me ' + r, icon: 'notifications', run: () => { readComposer(); state.composer.reminder = 'Remind ' + r; renderComposer(); } })),
+      ...(state.composer.reminder ? ['-', { label: 'No reminder', icon: 'notifications_off', run: () => { readComposer(); state.composer.reminder = null; renderComposer(); } }] : []),
+    ]);
+  },
+  'c-schedule'(el) {
+    readComposer();
+    const opts = [['Tomorrow morning', 'Nov 18, 8:00 AM', 'Tomorrow, 8:00 AM'], ['Tomorrow afternoon', 'Nov 18, 1:00 PM', 'Tomorrow, 1:00 PM'], ['Monday morning', 'Nov 23, 8:00 AM', 'Mon, 8:00 AM']];
+    openMenu(el, 'Schedule send', [
+      ...opts.map(([label, hint, value]) => ({ label, hint, icon: 'schedule_send', run: () => {
+        readComposer();
+        if (!state.composer.to.trim()) { state.composer.error = 'Add at least one recipient.'; renderComposer(); $('#c-to').focus(); return; }
+        state.composer.scheduled = value;
+        saveComposerAsDraft(true);
+        state.composer = null; renderComposer(); render();
+        toast(`Send scheduled for ${value}.`, { view: () => actions.nav({ dataset: { folder: 'drafts' } }) });
+      } })),
+      '-',
+      { label: 'Pick date & time', icon: 'calendar_month', run: () => toast("The date picker isn't part of this mock-up.") },
+    ]);
+  },
+  'c-send'() {
+    readComposer();
+    const c = state.composer;
+    if (!c.to.trim()) { c.error = 'Add at least one recipient.'; renderComposer(); $('#c-to').focus(); return; }
+    if (c.draftId) threads = threads.filter(t => t.id !== c.draftId);
+    const remind = c.reminder ? { fired: false, text: 'Reminder ' + c.reminder.replace(/^Remind /, '') } : null;
+    const t = { id: 'n' + Date.now(), folder: 'sent', sent: true, unread: false, starred: false, labels: [], date: nowTime(),
+      from: 'To: ' + c.to.split(',')[0].trim(), subject: c.subject || '(no subject)', snippet: c.body.replace(/\s+/g, ' ').trim(), reminder: remind,
+      messages: [mine(c.to.trim(), nowTime() + ' (just now)', (c.body.trim() || ' ').split(/\n{2,}/))] };
+    threads.unshift(t);
+    const snapshot = { ...c };
+    state.composer = null; renderComposer(); render();
+    toast(remind ? `Message sent. ${remind.text} if nobody replies.` : 'Message sent.', {
+      undo: () => { threads = threads.filter(x => x.id !== t.id); state.composer = { ...snapshot, error: '' }; renderComposer(); render(); },
+      view: () => { state.folder = 'sent'; state.query = ''; actions.open({ dataset: { id: t.id } }); },
+    });
+  },
+  'discard-draft'(el) {
+    const d = get(el.dataset.id); const i = threads.indexOf(d);
+    threads.splice(i, 1); render();
+    toast('Draft discarded.', { undo: () => { threads.splice(i, 0, d); render(); } });
+  },
+  'menu-item'(el) { const it = menu.items[Number(el.dataset.idx)]; closeMenu(); it.run(); },
+  undo() { $('#snackbar').hidden = true; if (snackUndo) snackUndo(); },
+  'snack-view'() { $('#snackbar').hidden = true; if (snackView) snackView(); },
+  'snack-close'() { $('#snackbar').hidden = true; },
+  'set-theme'(el) { prefs.theme = el.dataset.v; applyPrefs(); },
+  'set-density'(el) { prefs.density = el.dataset.v; applyPrefs(); },
+  'set-accent'(el) { prefs.accent = el.dataset.v; applyPrefs(); },
+};
+
+document.addEventListener('click', e => {
+  if (menu && !e.target.closest('.menu')) closeMenu();
+  if (state.settings && !e.target.closest('#settings') && !e.target.closest('[data-action="settings"]')) { state.settings = false; renderSettings(); }
+  const el = e.target.closest('[data-action]');
+  if (!el || el.disabled) return;
+  const fn = actions[el.dataset.action];
+  if (fn) fn(el, e);
+});
+
+document.addEventListener('input', e => {
+  if (e.target.id === 'search') {
+    state.query = e.target.value; state.openId = null; state.selected.clear();
+    $('#clear-search').hidden = !state.query;
+    render({ keepScroll: false });
+  }
+  if (e.target.id === 'reply-text' && state.reply) state.reply.text = e.target.value;
+  if (state.composer && ['c-to', 'c-subject', 'c-text'].includes(e.target.id)) {
+    readComposer();
+    if (e.target.id === 'c-subject') document.querySelector('.c-head .title').textContent = state.composer.subject || 'New Message';
+    if (state.composer.error && e.target.id === 'c-to') { state.composer.error = ''; document.querySelector('.c-error')?.remove(); }
+  }
+});
+
+document.addEventListener('keydown', e => {
+  const typing = /^(INPUT|TEXTAREA)$/.test(e.target.tagName);
+  if (e.key === 'Escape') {
+    if (menu) { closeMenu(); return; }
+    if (state.settings) { state.settings = false; renderSettings(); return; }
+    if (state.composer && state.composer.mode === 'max') { readComposer(); state.composer.mode = 'normal'; renderComposer(); return; }
+    if (state.drawer) { state.drawer = false; render(); return; }
+    if (typing) { e.target.blur(); return; }
+    if (state.openId) { actions.back(); return; }
+  }
+  if (typing) return;
+  if (e.key === 'Enter' && e.target.classList.contains('row')) actions.open(e.target);
+  if (e.key === '/') { e.preventDefault(); $('#search').focus(); }
+  if (e.key === 'c' && !e.metaKey && !e.ctrlKey) { e.preventDefault(); openComposer(); }
+});
+
+matchMedia('(max-width: 760px)').addEventListener('change', () => { state.drawer = false; render(); });
+
+// ------------------------------------------------------- settings & prefs --
+function renderSettings() {
+  $('#settings').hidden = !state.settings;
+  if (!state.settings) return;
+  const opt = (group, v, label, hint = '') =>
+    `<button class="opt ${prefs[group] === v ? 'on' : ''}" data-action="set-${group}" data-v="${v}" role="radio" aria-checked="${prefs[group] === v}">${icon(prefs[group] === v ? 'radio_button_checked' : 'radio_button_unchecked')}${label}${hint ? `<span class="hint">${hint}</span>` : ''}</button>`;
+  $('#opt-theme').innerHTML = opt('theme', 'system', 'Match system') + opt('theme', 'light', 'Light') + opt('theme', 'dark', 'Dark');
+  $('#opt-density').innerHTML = opt('density', 'default', 'Default', 'Attachment chips') + opt('density', 'comfortable', 'Comfortable') + opt('density', 'compact', 'Compact');
+  const sw = [['#0b57d0', 'Blue'], ['#00796b', 'Teal'], ['#146c2e', 'Green'], ['#6750a4', 'Violet'], ['#b3261e', 'Red'], ['#9c4a00', 'Amber']];
+  $('#opt-accent').innerHTML = sw.map(([c, n]) => `<button class="swatch ${prefs.accent === c ? 'on' : ''}" style="--sw:${c}" data-action="set-accent" data-v="${c}" aria-label="${n}" title="${n}">${prefs.accent === c ? icon('check') : ''}</button>`).join('');
+}
+function applyPrefs() {
+  const root = document.documentElement;
+  if (prefs.theme === 'system') root.removeAttribute('data-theme'); else root.dataset.theme = prefs.theme;
+  root.dataset.density = prefs.density;
+  root.style.setProperty('--accent', prefs.accent);
+  savePrefs(); renderSettings();
+}
+function syncScrim() {
+  $('#scrim').hidden = !(state.drawer || (state.composer && state.composer.mode === 'max'));
+  $('#scrim').style.zIndex = state.drawer ? 39 : 34;
+}
+
+applyPrefs();
+render();
+</script>
+</body>
+</html>

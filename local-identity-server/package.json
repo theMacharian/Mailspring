@@ -1,0 +1,12 @@
+{
+  "name": "mailspring-local-identity-server",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Local stand-in for Mailspring's identity server: sign-in, /api/me and plugin metadata storage",
+  "type": "module",
+  "engines": { "node": ">=22.13" },
+  "scripts": {
+    "start": "node --disable-warning=ExperimentalWarning server.mjs"
+  },
+  "license": "GPL-3.0"
+}

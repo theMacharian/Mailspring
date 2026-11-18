@@ -45,8 +45,26 @@ class RefreshButton extends React.Component<Record<string, unknown>, { refreshin
   }
 }
 
-const ProTourFeatures = [
+// Features the local identity server (local-identity-server/) serves without a quota. The
+// app only talks to that server when `env` is `development`; on Mailspring's servers these
+// stay Pro-limited, so they're only left out of the upgrade pitch in that mode.
+const LOCALLY_SERVED_FEATURES = ['send-reminders', 'send-later', 'snooze'];
+
+const isUsingLocalServer = () => AppEnv.config.get('env') === 'development';
+
+function isOfferedAsPro(item: { feature?: string }) {
+  return !(item.feature && isUsingLocalServer() && LOCALLY_SERVED_FEATURES.includes(item.feature));
+}
+
+const ProTourFeatures: {
+  feature?: string;
+  link: string;
+  icon: string;
+  title: string;
+  text: string;
+}[] = [
   {
+    feature: 'send-reminders',
     link: 'https://getmailspring.com/docs/add-reminders-to-sent-messages',
     icon: `icon-composer-reminders.png`,
     title: localized(`Follow-up reminders`),
@@ -87,6 +105,7 @@ const ProTourFeatures = [
     ),
   },
   {
+    feature: 'send-later',
     link: 'https://getmailspring.com/docs/schedule-messages-to-send-later',
     icon: `icon-composer-sendlater.png`,
     title: localized(`Send Later`),
@@ -103,6 +122,7 @@ const ProTourFeatures = [
     ),
   },
   {
+    feature: 'snooze',
     link: 'https://getmailspring.com/docs/snooze-emails-to-handle-them-later',
     icon: `toolbar-snooze.png`,
     title: localized(`Snooze messages`),
@@ -194,10 +214,15 @@ class PreferencesIdentity extends React.Component<
       <div className="row padded">
         <div style={{ display: 'flex', alignItems: 'flex-start' }}>
           <div className="basic-explanation">
-            {localizedReactFragment(
-              `You are using %@, which is free! You can try pro features like snooze, send later, read receipts and reminders a few times a week.`,
-              <strong>{localized('Mailspring Basic')}</strong>
-            )}
+            {isUsingLocalServer()
+              ? localizedReactFragment(
+                  `You are using %@, which is free! Snooze, send later and reminders are unlimited on your local server, and you can try other pro features like read receipts a few times a week.`,
+                  <strong>{localized('Mailspring Basic')}</strong>
+                )
+              : localizedReactFragment(
+                  `You are using %@, which is free! You can try pro features like snooze, send later, read receipts and reminders a few times a week.`,
+                  <strong>{localized('Mailspring Basic')}</strong>
+                )}
             {process.platform === 'linux' && (
               <span>
                 {localizedReactFragment(
@@ -293,100 +318,47 @@ class PreferencesIdentity extends React.Component<
   }
 }
 
-const ExploreMailspringSmall: React.FunctionComponent = () => (
-  <div className="features">
-    <ul>
-      <li>
-        <RetinaImg
-          name="pro-feature-checkmark.png"
-          style={{ paddingRight: 8 }}
-          mode={RetinaImg.Mode.ContentDark}
-        />
-        {localized(`Rich contact profiles`)}
-      </li>
-      <li>
-        <RetinaImg
-          name="pro-feature-checkmark.png"
-          style={{ paddingRight: 8 }}
-          mode={RetinaImg.Mode.ContentDark}
-        />
-        {localized(`Follow-up reminders`)}
-      </li>
-      <li>
-        <RetinaImg
-          name="pro-feature-checkmark.png"
-          style={{ paddingRight: 8 }}
-          mode={RetinaImg.Mode.ContentDark}
-        />
-        {localized(`Read Receipts`)}
-      </li>
-      <li>
-        <RetinaImg
-          name="pro-feature-checkmark.png"
-          style={{ paddingRight: 8 }}
-          mode={RetinaImg.Mode.ContentDark}
-        />
-        {localized(`Link tracking`)}
-      </li>
-      <li>
-        <RetinaImg
-          name="pro-feature-checkmark.png"
-          style={{ paddingRight: 8 }}
-          mode={RetinaImg.Mode.ContentDark}
-        />
-        {localized(`Powerful template support`)}
-      </li>
-    </ul>
-    <ul>
-      <li>
-        <RetinaImg
-          name="pro-feature-checkmark.png"
-          style={{ paddingRight: 8 }}
-          mode={RetinaImg.Mode.ContentDark}
-        />
-        {localized(`Send Later`)}
-      </li>
-      <li>
-        <RetinaImg
-          name="pro-feature-checkmark.png"
-          style={{ paddingRight: 8 }}
-          mode={RetinaImg.Mode.ContentDark}
-        />
-        {localized(`Company overviews`)}
-      </li>
-      <li>
-        <RetinaImg
-          name="pro-feature-checkmark.png"
-          style={{ paddingRight: 8 }}
-          mode={RetinaImg.Mode.ContentDark}
-        />
-        {localized(`Snooze messages`)}
-      </li>
-      <li>
-        <RetinaImg
-          name="pro-feature-checkmark.png"
-          style={{ paddingRight: 8 }}
-          mode={RetinaImg.Mode.ContentDark}
-        />
-        {localized(`Mailbox insights`)}
-      </li>
-      <li>
-        <RetinaImg
-          name="pro-feature-checkmark.png"
-          style={{ paddingRight: 8 }}
-          mode={RetinaImg.Mode.ContentDark}
-        />
-        {localized(`... and much more!`)}
-      </li>
-    </ul>
-  </div>
-);
+const ProChecklist: { feature?: string; title: string }[] = [
+  { title: localized(`Rich contact profiles`) },
+  { feature: 'send-reminders', title: localized(`Follow-up reminders`) },
+  { title: localized(`Read Receipts`) },
+  { title: localized(`Link tracking`) },
+  { title: localized(`Powerful template support`) },
+  { feature: 'send-later', title: localized(`Send Later`) },
+  { title: localized(`Company overviews`) },
+  { feature: 'snooze', title: localized(`Snooze messages`) },
+  { title: localized(`Mailbox insights`) },
+  { title: localized(`... and much more!`) },
+];
+
+const ExploreMailspringSmall: React.FunctionComponent = () => {
+  const items = ProChecklist.filter(isOfferedAsPro);
+  const half = Math.ceil(items.length / 2);
+  return (
+    <div className="features">
+      {[items.slice(0, half), items.slice(half)].map((column, idx) => (
+        <ul key={idx}>
+          {column.map((item) => (
+            <li key={item.title}>
+              <RetinaImg
+                name="pro-feature-checkmark.png"
+                style={{ paddingRight: 8 }}
+                mode={RetinaImg.Mode.ContentDark}
+              />
+              {item.title}
+            </li>
+          ))}
+        </ul>
+      ))}
+    </div>
+  );
+};
 
 const ExploreMailspringPro: React.FunctionComponent = () => (
   <>
     <div className="feature-explore-title">{localized('Explore Mailspring Pro')}</div>
     <div className="feature-explore-grid">
-      {ProTourFeatures.map((item) => (
+      {ProTourFeatures.filter(isOfferedAsPro).map((item) => (
         <a key={item.title} className="feature" href={item.link}>
           <div className="popout">
             <RetinaImg name="thread-popout.png" mode={RetinaImg.Mode.ContentDark} />

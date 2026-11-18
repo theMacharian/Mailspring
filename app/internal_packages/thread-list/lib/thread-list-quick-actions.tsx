@@ -82,3 +82,37 @@ export const ThreadTrashQuickAction: React.FC<{ thread: Thread }> = React.memo((
   );
 }, sameThreadId);
 ThreadTrashQuickAction.displayName = 'ThreadTrashQuickAction';
+
+export const ThreadToggleUnreadQuickAction: React.FC<{ thread: Thread }> = ({ thread }) => {
+  const label = thread.unread ? localized('Mark as Read') : localized('Mark as Unread');
+
+  const onToggle = (event: React.MouseEvent | React.KeyboardEvent) => {
+    Actions.queueTask(
+      TaskFactory.taskForInvertingUnread({
+        source: 'Quick Actions: Thread List',
+        threads: [thread],
+      })
+    );
+    event.stopPropagation();
+  };
+
+  return (
+    <div
+      key="toggle-unread"
+      role="button"
+      tabIndex={0}
+      title={label}
+      aria-label={label}
+      style={{ order: 120 }}
+      className={`btn action action-toggle-unread ${thread.unread ? 'is-unread' : 'is-read'}`}
+      onClick={onToggle}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          onToggle(e);
+        }
+      }}
+    />
+  );
+};
+ThreadToggleUnreadQuickAction.displayName = 'ThreadToggleUnreadQuickAction';

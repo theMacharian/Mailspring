@@ -1,0 +1,114 @@
+@import 'ui-variables';
+
+// Shown only by themes that move Compose into the sidebar (Clean).
+.sidebar-compose {
+  display: none;
+}
+
+.floating-composers {
+  position: fixed;
+  right: 16px;
+  bottom: 0;
+  z-index: 30;
+  display: flex;
+  flex-direction: row-reverse;
+  align-items: flex-end;
+  gap: 12px;
+  // The row spans the gaps between panels; only the panels themselves take clicks.
+  pointer-events: none;
+}
+
+.floating-composer {
+  pointer-events: auto;
+  width: 540px;
+  height: ~'min(560px, calc(100vh - 96px))';
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: @background-primary;
+  border-radius: 10px 10px 0 0;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3), 0 4px 12px 3px rgba(0, 0, 0, 0.18);
+
+  &.mode-minimized {
+    width: 280px;
+    height: 40px;
+    .floating-composer-header {
+      cursor: pointer;
+    }
+    // Hidden, not unmounted, so the editor keeps its undo history and selection.
+    .floating-composer-body {
+      display: none;
+    }
+  }
+
+  &.mode-maximized {
+    position: fixed;
+    top: 6vh;
+    bottom: 6vh;
+    left: 10vw;
+    right: 10vw;
+    z-index: 32;
+    width: auto;
+    height: auto;
+    border-radius: 10px;
+  }
+}
+
+.floating-composer-scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 31;
+  pointer-events: auto;
+  background: rgba(0, 0, 0, 0.35);
+}
+
+.floating-composer-header {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  flex: none;
+  height: 40px;
+  padding: 0 6px 0 14px;
+  background: @panel-background-color;
+  color: @text-color;
+  font-weight: @font-weight-semi-bold;
+
+  .floating-composer-title {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+.floating-composer-button {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: 0;
+  border-radius: 14px;
+  background: transparent;
+  color: @text-color-subtle;
+  cursor: pointer;
+  &:hover {
+    background: fade(@text-color, 8%);
+  }
+}
+
+.floating-composer-body {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+
+  .composer-floating {
+    flex: 1;
+    min-height: 0;
+  }
+  // The panel header has its own pop-out button.
+  .show-popout {
+    display: none;
+  }
+}

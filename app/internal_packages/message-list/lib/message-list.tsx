@@ -263,6 +263,18 @@ class MessageList extends React.Component<Record<string, unknown>, MessageListSt
     });
   };
 
+  _onReplyOfType = (type: 'reply' | 'reply-all') => {
+    if (!this.state.currentThread) {
+      return;
+    }
+    Actions.composeReply({
+      thread: this.state.currentThread,
+      message: this._lastMessage(),
+      type,
+      behavior: 'prefer-existing-if-pristine',
+    });
+  };
+
   _onMessageListKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
     if (!this._messageListEl) return;
 
@@ -383,6 +395,12 @@ class MessageList extends React.Component<Record<string, unknown>, MessageListSt
             key="reply-area"
             onClick={this._onClickReplyArea}
             replyType={this._replyType()}
+          />,
+          <MessageListReplyButtons
+            key="reply-buttons"
+            canReplyAll={!!this._lastMessage() && this._lastMessage().canReplyAll()}
+            onReply={this._onReplyOfType}
+            onForward={this._onForward}
           />
         );
       }
@@ -714,4 +732,38 @@ class MessageListReplyArea extends React.Component<{ onClick: () => void; replyT
     );
   }
 }
+/**
+ * Reply, Reply all and Forward as separate buttons under the thread. Hidden by default, where
+ * the single reply box above serves; themes that prefer buttons (Clean) show these and hide
+ * the box.
+ */
+function MessageListReplyButtons({
+  canReplyAll,
+  onReply,
+  onForward,
+}: {
+  canReplyAll: boolean;
+  onReply: (type: 'reply' | 'reply-all') => void;
+  onForward: () => void;
+}) {
+  return (
+    <div className="footer-reply-buttons">
+      <button className="reply-pill" onClick={() => onReply('reply')}>
+        <RetinaImg name="reply-footer.png" mode={RetinaImg.Mode.ContentIsMask} />
+        {localized('Reply')}
+      </button>
+      {canReplyAll && (
+        <button className="reply-pill" onClick={() => onReply('reply-all')}>
+          <RetinaImg name="reply-all-footer.png" mode={RetinaImg.Mode.ContentIsMask} />
+          {localized('Reply All')}
+        </button>
+      )}
+      <button className="reply-pill" onClick={onForward}>
+        <RetinaImg name="toolbar-forward.png" mode={RetinaImg.Mode.ContentIsMask} />
+        {localized('Forward')}
+      </button>
+    </div>
+  );
+}
+
 export default SearchableComponentMaker.extend(MessageList);

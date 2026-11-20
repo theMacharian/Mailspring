@@ -995,53 +995,102 @@ body .agenda-panel {
   }
 }
 
-// Attachments as a chip with the file's name rather than a paperclip.
-.thread-list .details {
-  .thread-icon-attachment {
+// Attachments as chips with their file names on a line of their own under the subject,
+// as in the design. Rows with attachments are this much taller; the list reads the height.
+mailspring-workspace {
+  --thread-list-attachment-row-height: 36px;
+}
+.thread-list .details .thread-icon-attachment {
+  display: none;
+}
+.thread-list .list-tabular-item.has-attachments {
+  align-items: flex-start;
+  > .list-column {
+    height: 36px;
+  }
+  > .list-column-Message {
+    height: auto;
+    align-items: flex-start;
+  }
+  .details {
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  .details > :not(.thread-attachment-row) {
+    height: 36px;
+    line-height: 36px;
+  }
+  .thread-attachment-row {
+    display: flex;
+    flex-basis: 100%;
+    align-items: flex-start;
+    gap: 6px;
+    height: 36px;
+    overflow: hidden;
+  }
+}
+.thread-attachment-more {
+  font-size: 12px;
+  line-height: 26px;
+  color: @clean-text-3;
+}
+.thread-list .thread-attachment-chip {
+  display: inline-flex;
+  align-items: center;
+  flex: none;
+  gap: 6px;
+  max-width: 200px;
+  height: 26px;
+  padding: 0 10px 0 8px;
+  border: 1px solid @clean-outline;
+  border-radius: 13px;
+  background: @clean-surface;
+  color: @clean-text-2;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 26px;
+  .kind {
+    flex: none;
+    width: 10px;
+    height: 12px;
+    border-radius: 2px;
+    background: @clean-text-3;
+  }
+  .kind-pdf {
+    background: #d93025;
+  }
+  .kind-image,
+  .kind-doc {
+    background: #1a73e8;
+  }
+  .kind-sheet {
+    background: #188038;
+  }
+  .name {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .more {
+    color: @clean-text-3;
+  }
+}
+
+// User labels in the sidebar: a filled label shape in the label's own colour, the same hue
+// as its chips in the list.
+.account-sidebar .outline-view .item .icon.has-hue {
+  display: flex;
+  align-items: center;
+  img.content-mask {
     display: none;
   }
-  .thread-attachment-chip {
-    display: inline-flex;
-    align-items: center;
-    flex: none;
-    gap: 6px;
-    max-width: 200px;
-    height: 24px;
-    margin-left: 8px;
-    padding: 0 10px 0 8px;
-    border: 1px solid @clean-outline;
-    border-radius: 12px;
-    background: @clean-surface;
-    color: @clean-text-2;
-    font-size: 12px;
-    font-weight: 400;
-    .kind {
-      flex: none;
-      width: 10px;
-      height: 12px;
-      border-radius: 2px;
-      background: @clean-text-3;
-    }
-    .kind-pdf {
-      background: #d93025;
-    }
-    .kind-image {
-      background: #1a73e8;
-    }
-    .kind-doc {
-      background: #1a73e8;
-    }
-    .kind-sheet {
-      background: #188038;
-    }
-    .name {
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-    .more {
-      color: @clean-text-3;
-    }
+  &::before {
+    content: '';
+    width: 16px;
+    height: 12px;
+    clip-path: polygon(0 0, 72% 0, 100% 50%, 72% 100%, 0 100%);
+    border-radius: 2px;
+    background: ~'hsl(var(--item-hue) 55% @{clean-label-lightness})';
   }
 }
 
@@ -1084,10 +1133,19 @@ body .agenda-panel {
   }
 }
 
-// With a message open the folder column's toolbar also holds the back button, and there is
-// no room for the name beside it.
-.sheet-toolbar .item-container:has(> .item-back) .app-brand {
+// Other sheets (Preferences, Contacts…) put a back button in the folder column's toolbar,
+// leaving no room for the name beside it.
+.sheet-toolbar-container:not([data-id='Thread']) .item-container:has(> .item-back) .app-brand {
   display: none;
+}
+
+// With a message open, Back, the actions and Newer / Older live in the strip above the
+// message (ReaderActionStrip), so the top bar looks as it does over the inbox.
+.sheet-toolbar-container[data-id='Thread'] {
+  .item-back,
+  .message-toolbar-arrow {
+    display: none;
+  }
 }
 .app-brand {
   margin-right: 8px;
@@ -1137,6 +1195,154 @@ body.folders-collapsed {
       .icon {
         padding-right: 0;
       }
+    }
+  }
+}
+
+// A row without labels keeps no gap before its subject, so subject and attachment chips
+// start at the same edge.
+.thread-list .thread-injected-mail-labels:not(:has(*)) {
+  margin-right: 0;
+}
+
+// Attachments in an open message as compact cards, as in the design: an 80px preview
+// (the top of the first page, or the file type), then the name and size. Open, Quick Look
+// and download stay; the two action buttons appear over the preview on hover or focus.
+#message-list {
+  .download-all {
+    margin: 12px 0 8px;
+    font-size: 12px;
+    color: @clean-text-3;
+    img {
+      background-color: @clean-text-3;
+    }
+  }
+  .attachments-area {
+    margin: 0;
+    padding: 2px 0 6px;
+    > div {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: flex-start;
+      gap: 10px;
+    }
+  }
+  .attachments-area .nylas-attachment-item.file-attachment-item {
+    display: flex;
+    flex-direction: column;
+    width: 168px;
+    min-width: 0;
+    margin: 0;
+    border: 1px solid @clean-line;
+    border-radius: 12px;
+    overflow: hidden;
+    background: @clean-surface;
+    font-size: 12px;
+
+    &:hover {
+      box-shadow: @clean-shadow-1;
+    }
+    &:focus {
+      outline: none;
+      border-color: @clean-accent;
+    }
+
+    .file-thumbnail-preview,
+    .file-icon-preview {
+      height: 80px;
+      border: none;
+      border-radius: 0;
+      background-color: mix(@clean-text-3, @clean-surface, 8%);
+    }
+    .file-icon-preview {
+      display: grid;
+      place-items: center;
+      img {
+        width: 40px !important;
+        height: 40px !important;
+        object-fit: contain;
+      }
+    }
+
+    .inner {
+      height: auto;
+      background: none;
+      border-radius: 0;
+      // The caption row is a Flexbox, which positions itself inline; the action buttons
+      // need the card as their frame so they can sit over the preview.
+      > div {
+        position: static !important;
+      }
+    }
+    .file-info-wrap {
+      gap: 6px;
+      min-width: 0;
+      height: auto;
+      padding: 6px 8px;
+      border: none;
+      border-radius: 0;
+      background: none;
+
+      .file-icon {
+        width: 16px !important;
+        height: 16px !important;
+        margin: 0;
+        object-fit: contain;
+      }
+      .file-name {
+        max-width: none;
+        font-weight: 600;
+        color: @clean-text;
+      }
+      .file-size {
+        margin: 0;
+        color: @clean-text-3;
+        &::before,
+        &::after {
+          content: none;
+        }
+      }
+    }
+
+    .file-action-icon {
+      position: absolute;
+      top: 6px;
+      right: 6px;
+      z-index: 4;
+      width: 28px;
+      height: 28px;
+      flex-basis: auto;
+      padding: 0;
+      border: none;
+      border-radius: 14px;
+      background: @clean-surface;
+      box-shadow: @clean-shadow-1;
+      opacity: 0;
+      transition: opacity 120ms;
+      img {
+        background-color: @clean-text-2;
+      }
+      &.quicklook {
+        right: 40px;
+        border-radius: 14px;
+      }
+      &:hover {
+        background: mix(@clean-text-2, @clean-surface, 8%);
+      }
+    }
+    &:hover .file-action-icon,
+    &:focus .file-action-icon,
+    &:focus-within .file-action-icon {
+      opacity: 1;
+    }
+
+    .progress-foreground,
+    .progress-background {
+      left: 0;
+      border-radius: 0;
+    }
+    .progress-background {
+      width: 100%;
     }
   }
 }

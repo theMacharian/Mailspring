@@ -94,10 +94,19 @@ class ThreadList extends React.Component<
   }
 
   render() {
-    let columns, itemHeight;
+    let columns, itemHeight, extraHeightForItem;
     if (this.state.style === 'wide') {
       columns = ThreadListColumns.Wide;
       itemHeight = DOMUtils.getWorkspaceCssNumberProperty('thread-list-item-height-wide', 36);
+      // Themes that put attachments on a line of their own give it a height here.
+      const attachmentRow = DOMUtils.getWorkspaceCssNumberProperty(
+        'thread-list-attachment-row-height',
+        0
+      );
+      if (attachmentRow > 0) {
+        extraHeightForItem = (thread: Thread) =>
+          ThreadListColumns.visibleAttachments(thread).length ? attachmentRow : 0;
+      }
     } else {
       columns = ThreadListColumns.Narrow;
       itemHeight = DOMUtils.getWorkspaceCssNumberProperty('thread-list-item-height-narrow', 85);
@@ -118,6 +127,7 @@ class ThreadList extends React.Component<
             columns={columns}
             itemPropsProvider={this._threadPropsProvider}
             itemHeight={itemHeight}
+            extraHeightForItem={extraHeightForItem}
             className={`thread-list thread-list-${this.state.style}`}
             scrollTooltipComponent={ThreadListScrollTooltip}
             EmptyComponent={EmptyListState}
@@ -142,6 +152,7 @@ class ThreadList extends React.Component<
   _threadPropsProvider(item: Thread) {
     let classes = classnames({
       unread: item.unread,
+      'has-attachments': ThreadListColumns.visibleAttachments(item).length > 0,
     });
     classes += ExtensionRegistry.ThreadList.extensions()
       .filter((ext) => ext.cssClassNamesForThreadListItem != null)

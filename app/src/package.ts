@@ -34,6 +34,12 @@ export default class Package {
   public preferredHiddenLocations: string[];
   // Themes only: keep the folder list beside an open message in the single panel layout.
   public preferredFoldersBesideMessage: boolean;
+  // Themes only: show the conversation's actions in a strip at the top of the open message,
+  // instead of in the window's top bar. See the thread-list package's ReaderActionStrip.
+  public readerActionStrip: boolean;
+  // Themes only: false shows pushed sheets (an open message over the inbox) in place,
+  // without the slide and fade. See WorkspaceStore.stackChangeAnimates.
+  public sheetTransitions: boolean;
   private json: any;
 
   constructor(dir: string) {
@@ -62,6 +68,8 @@ export default class Package {
     this.preferredLayoutMode = this.json.preferredLayoutMode || null;
     this.preferredHiddenLocations = this.json.preferredHiddenLocations || [];
     this.preferredFoldersBesideMessage = !!this.json.preferredFoldersBesideMessage;
+    this.readerActionStrip = !!this.json.readerActionStrip;
+    this.sheetTransitions = this.json.sheetTransitions !== false;
   }
 
   activate() {

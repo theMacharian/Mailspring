@@ -65,7 +65,7 @@ export default class SendRemindersPopoverButton extends Component<{
       <button
         title={title}
         tabIndex={-1}
-        className={`send-reminders-toolbar-button ${className}`}
+        className={`send-reminders-toolbar-button ${reminderDate ? 'has-reminder' : ''} ${className}`}
         style={{ order: -109 }}
         onClick={this.onClick}
       >

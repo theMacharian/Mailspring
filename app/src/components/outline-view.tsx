@@ -9,6 +9,9 @@ export interface IOutlineViewItem {
   id?: string;
   title?: string;
   iconName?: string;
+  // A colour hue (0–360) for items that carry one, such as user labels. Exposed to themes as
+  // --item-hue on the icon; the base styles don't use it.
+  hue?: number;
   name?: string;
   children?: IOutlineViewItem[];
   contextMenuLabel?: string;

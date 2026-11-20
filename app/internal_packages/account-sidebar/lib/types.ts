@@ -6,6 +6,7 @@ export interface ISidebarItem {
   contextMenuLabel: string;
   count: number;
   iconName: string;
+  hue?: number;
   children: ISidebarItem[];
   perspective: MailboxPerspective;
   selected: boolean;

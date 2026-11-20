@@ -362,10 +362,11 @@ class WorkspaceStore extends MailspringStore {
   }
 
   // Public: Returns false while observers handle a stack change that should appear without
-  // the push and pop animations.
+  // the push and pop animations, and always for themes that turn them off.
   //
   stackChangeAnimates() {
-    return this._stackChangeAnimates;
+    const theme = AppEnv.themes && AppEnv.themes.getActiveTheme();
+    return this._stackChangeAnimates && (!theme || theme.sheetTransitions !== false);
   }
 
   // Public: Returns an {Array} of locations that have been hidden.

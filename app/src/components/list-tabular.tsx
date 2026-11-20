@@ -87,14 +87,14 @@ export const ListTabularRows: React.FC<ListTabularRowsProps> = React.memo(
       tabIndex={tabIndex}
       aria-activedescendant={ariaActiveDescendant}
     >
-      {rows.map(({ item, idx, itemProps = {} }) => {
+      {rows.map(({ item, idx, itemProps = {}, top, height }) => {
         if (!item) return null;
         return (
           <ListTabularItem
             key={item.id || idx}
             item={item}
             itemProps={itemProps}
-            metrics={{ top: idx * itemHeight, height: itemHeight }}
+            metrics={{ top: top ?? idx * itemHeight, height: height ?? itemHeight }}
             columns={columns}
             onSelect={onSelect}
             onClick={onClick}
@@ -116,6 +116,9 @@ export interface ListTabularProps extends ScrollRegionProps {
   dataSource?: ListDataSource;
   itemPropsProvider?: (...args: any[]) => any;
   itemHeight?: number;
+  // Height a row needs beyond itemHeight (an attachment line, say). Rows the list hasn't
+  // loaded yet are assumed to need none, so the list grows as taller rows come into view.
+  extraHeightForItem?: (item: Model) => number;
   EmptyComponent?: React.ComponentType<{ visible: boolean }>;
   role?: string;
   ariaLabel?: string;
@@ -166,6 +169,13 @@ export class ListTabular extends Component<ListTabularProps, ListTabularState> {
   _scrollRegion: ScrollRegion;
   _listRowsEl: HTMLElement | null = null;
 
+  // Extra height of each row seen so far, by index. Positions and the total height are
+  // itemHeight per row plus these. Reset when the rows shift (a new data source, or the
+  // count changing as mail arrives or leaves).
+  _extraByIndex = new Map<number, number>();
+  _extraCount = -1;
+  _pendingScrollAdjust = 0;
+
   _setListRowsEl = (el: HTMLElement | null) => {
     this._listRowsEl = el;
   };
@@ -190,9 +200,16 @@ export class ListTabular extends Component<ListTabularProps, ListTabularState> {
     if (this.props.onComponentDidUpdate) {
       this.props.onComponentDidUpdate();
     }
+    // Rows above the viewport turned out taller than assumed: move the scroll position by the
+    // same amount so the rows on screen don't jump.
+    if (this._pendingScrollAdjust && this._scrollRegion) {
+      this._scrollRegion.scrollTop += this._pendingScrollAdjust;
+      this._pendingScrollAdjust = 0;
+    }
     // If our view has been swapped out for an entirely different one,
     // reset our scroll position to the top.
     if (prevProps.dataSource !== this.props.dataSource) {
+      this._extraByIndex.clear();
       this._scrollRegion.scrollTop = 0;
       this.setupDataSource(this.props.dataSource);
     }
@@ -277,7 +294,7 @@ export class ListTabular extends Component<ListTabularProps, ListTabularState> {
       const item = items[idx];
       if (item) {
         const itemProps = itemPropsProvider(item, idx);
-        rows.push({ item, idx, itemProps });
+        rows.push({ item, idx, itemProps, ...this._metricsForIndex(idx) });
       }
     });
 
@@ -310,9 +327,10 @@ export class ListTabular extends Component<ListTabularProps, ListTabularState> {
     const { scrollTop } = this._scrollRegion;
     const { itemHeight } = this.props;
 
-    // Determine the exact range of rows we want onscreen
+    // Determine the exact range of rows we want onscreen. Rows are at least itemHeight tall,
+    // so this many always cover the window.
     const rangeSize = Math.ceil(window.innerHeight / itemHeight);
-    let rangeStart = Math.floor(scrollTop / itemHeight);
+    let rangeStart = this._indexAtOffset(scrollTop);
     let rangeEnd = rangeStart + rangeSize;
 
     // Expand the start/end so that you can advance the keyboard cursor fast and
@@ -320,6 +338,55 @@ export class ListTabular extends Component<ListTabularProps, ListTabularState> {
     rangeStart = Math.max(0, rangeStart - 2);
     rangeEnd = Math.min(rangeEnd + 2, this.state.count + 1);
     return { start: rangeStart, end: rangeEnd };
+  }
+
+  _extraBefore(idx: number) {
+    let sum = 0;
+    for (const [i, extra] of this._extraByIndex) {
+      if (i < idx) sum += extra;
+    }
+    return sum;
+  }
+
+  _totalExtraHeight() {
+    let sum = 0;
+    for (const extra of this._extraByIndex.values()) sum += extra;
+    return sum;
+  }
+
+  _metricsForIndex(idx: number) {
+    const { itemHeight } = this.props;
+    return {
+      top: idx * itemHeight + this._extraBefore(idx),
+      height: itemHeight + (this._extraByIndex.get(idx) || 0),
+    };
+  }
+
+  // The index of the row at a vertical offset into the list.
+  _indexAtOffset(offset: number) {
+    const { itemHeight } = this.props;
+    if (this._extraByIndex.size === 0) return Math.floor(offset / itemHeight);
+    let idx = Math.max(0, Math.floor((offset - this._totalExtraHeight()) / itemHeight));
+    while (this._metricsForIndex(idx + 1).top <= offset) idx++;
+    return idx;
+  }
+
+  _recordExtraHeights(items: { [idx: number]: Model }, start: number, count: number) {
+    const { extraHeightForItem } = this.props;
+    if (!extraHeightForItem) return;
+    // Measured before any reset, so a count change doesn't move the rows on screen either.
+    const startTopBefore = this._extraBefore(start);
+    if (count !== this._extraCount) {
+      this._extraByIndex.clear();
+      this._extraCount = count;
+    }
+    for (const [idx, item] of Object.entries(items)) {
+      if (!item) continue;
+      const extra = extraHeightForItem(item) || 0;
+      if (extra) this._extraByIndex.set(Number(idx), extra);
+      else this._extraByIndex.delete(Number(idx));
+    }
+    this._pendingScrollAdjust += this._extraBefore(start) - startTopBefore;
   }
 
   updateRangeStateIfViewportChanged() {
@@ -352,6 +419,7 @@ export class ListTabular extends Component<ListTabularProps, ListTabularState> {
     Utils.range(start, end).forEach((idx) => {
       items[idx] = dataSource.get(idx);
     });
+    this._recordExtraHeights(items, start, dataSource.count());
 
     // If we have a previous state, and the previous range matches the new range,
     // (eg: we're not scrolling), identify removed items. We'll render them in one
@@ -445,7 +513,7 @@ export class ListTabular extends Component<ListTabularProps, ListTabularState> {
             ariaActiveDescendant={ariaActiveDescendant}
             domRef={this._setListRowsEl}
             innerStyles={{
-              height: count * itemHeight,
+              height: count * itemHeight + this._totalExtraHeight(),
               backgroundSize: `100% ${this.props.itemHeight}px`,
             }}
             onClick={onClick}

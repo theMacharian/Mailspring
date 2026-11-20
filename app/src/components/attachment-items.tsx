@@ -227,7 +227,16 @@ export class AttachmentItem extends Component<AttachmentItemProps> {
               background: `url('file://${filePreviewPath.replace(/\\/g, '\\\\')}') 0% 1% / cover`,
             }}
           />
-        ) : null}
+        ) : (
+          // Hidden by default; card-style themes (Clean) show the file type here.
+          <div draggable={false} className="file-icon-preview" aria-hidden="true">
+            <RetinaImg
+              fallback="file-fallback.png"
+              mode={RetinaImg.Mode.ContentPreserve}
+              name={fileIconName}
+            />
+          </div>
+        )}
         <div className="inner">
           <ProgressBar download={download} />
           <Flexbox direction="row" style={{ alignItems: 'center' }}>
@@ -244,7 +253,7 @@ export class AttachmentItem extends Component<AttachmentItemProps> {
               <span className="file-name" title={displayName}>
                 {displayName}
               </span>
-              <span className="file-size">{displaySize ? `(${displaySize})` : ''}</span>
+              <span className="file-size">{displaySize || ''}</span>
             </div>
             {filePreviewPath && (
               <div className="file-action-icon quicklook" onClick={this._onClickQuicklookIcon}>

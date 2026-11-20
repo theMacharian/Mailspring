@@ -54,6 +54,20 @@ function Icon({ name }: { name: keyof typeof ICONS }) {
   );
 }
 
+/**
+ * How many conversations the current view holds. The list loads conversations as you
+ * scroll, so a folder's own total is the real count; other views fall back to the list.
+ */
+export function conversationTotal() {
+  const ds = ThreadListStore.dataSource();
+  const categories = FocusedPerspectiveStore.current().categories() || [];
+  const folderTotal = categories.reduce(
+    (sum, c) => sum + (ThreadCountsStore.totalCountForCategoryId(c.id) || 0),
+    0
+  );
+  return Math.max(folderTotal, ds ? ds.count() : 0);
+}
+
 async function markAllAsRead() {
   const perspective = FocusedPerspectiveStore.current();
   const categories = perspective.categories() || [];
@@ -118,16 +132,10 @@ export default class ThreadListHeaderBar extends React.Component<
   _getState() {
     const ds = ThreadListStore.dataSource();
     const loaded = ds ? ds.itemsCurrentlyInViewMatching(() => true).length : 0;
-    // The list loads conversations as you scroll, so the folder's own total is the real count.
-    const categories = FocusedPerspectiveStore.current().categories() || [];
-    const folderTotal = categories.reduce(
-      (sum, c) => sum + (ThreadCountsStore.totalCountForCategoryId(c.id) || 0),
-      0
-    );
     return {
       selected: ds && ds.selection ? ds.selection.count() : 0,
       loaded,
-      total: Math.max(folderTotal, ds ? ds.count() : 0, loaded),
+      total: Math.max(conversationTotal(), loaded),
     };
   }
 

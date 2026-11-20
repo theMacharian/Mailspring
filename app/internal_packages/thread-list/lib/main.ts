@@ -6,6 +6,7 @@ import ThreadListVertical from './thread-list-vertical';
 import ThreadListEmptyFolderBar from './thread-list-empty-folder-bar';
 import ThreadListHeaderBar from './thread-list-header-bar';
 import MessageListToolbar from './message-list-toolbar';
+import ReaderActionStrip from './reader-action-strip';
 import SelectedItemsStack from './selected-items-stack';
 import * as ThreadPermalinkHandler from './thread-permalink-handler';
 
@@ -48,6 +49,10 @@ export function activate() {
     location: WorkspaceStore.Location.MessageList.Toolbar,
   });
 
+  ComponentRegistry.register(ReaderActionStrip, {
+    role: 'MessageListActionStrip',
+  });
+
   ComponentRegistry.register(DownButton, {
     location: WorkspaceStore.Location.MessageList.Toolbar,
     modes: ['list'],
@@ -73,6 +78,7 @@ export function deactivate() {
   ComponentRegistry.unregister(SelectedItemsStack);
   ComponentRegistry.unregister(ThreadListToolbar);
   ComponentRegistry.unregister(MessageListToolbar);
+  ComponentRegistry.unregister(ReaderActionStrip);
   ComponentRegistry.unregister(MoveButtons);
   ComponentRegistry.unregister(FlagButtons);
   ComponentRegistry.unregister(UpButton);

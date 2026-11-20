@@ -356,7 +356,12 @@ class OutlineViewItem extends Component<OutlineViewItemProps, OutlineViewItemSta
           </div>
         )}
         {item.iconName && (
-          <div className="icon">
+          <div
+            className={item.hue != null ? 'icon has-hue' : 'icon'}
+            style={
+              item.hue != null ? ({ '--item-hue': item.hue } as React.CSSProperties) : undefined
+            }
+          >
             <RetinaImg
               name={item.iconName}
               fallback={'folder.png'}

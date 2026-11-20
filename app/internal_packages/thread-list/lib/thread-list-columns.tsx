@@ -88,28 +88,52 @@ const ATTACHMENT_KIND: { [ext: string]: string } = {
   csv: 'sheet',
 };
 
-/**
- * The first attachment's name as a chip, with a count of the rest. Rows have one fixed
- * height, so the chip sits at the end of the line rather than under the subject. Hidden by
- * default, where the paperclip icon serves; themes that want chips (Clean) swap them.
- */
-function ThreadAttachmentChip({
-  messages,
-}: {
-  messages: ThreadWithMessagesMetadata['__messages'];
-}) {
-  const files = messages
-    .flatMap((m) => m.files || [])
-    .filter((f) => !f.contentId || f.size > 12 * 1024);
-  if (!files.length) return null;
-  const name = files[0].displayName();
+// Files shown as attachments: everything but small inline images, matching
+// Utils.showIconForAttachments.
+export function visibleAttachments(thread: Thread) {
+  const messages = (thread as ThreadWithMessagesMetadata).__messages || [];
+  return messages.flatMap((m) => m.files || []).filter((f) => !f.contentId || f.size > 12 * 1024);
+}
+
+// Chips shown before the rest collapse into "+N".
+const MAX_ATTACHMENT_CHIPS = 3;
+
+function AttachmentChip({ name, more }: { name: string; more?: number }) {
   const ext = (name.split('.').pop() || '').toLowerCase();
   return (
-    <span className="thread-attachment-chip" title={files.map((f) => f.displayName()).join(', ')}>
+    <span className="thread-attachment-chip" title={name}>
       <span className={`kind kind-${ATTACHMENT_KIND[ext] || 'file'}`} />
       <span className="name">{name}</span>
-      {files.length > 1 && <span className="more">+{files.length - 1}</span>}
+      {more > 0 && <span className="more">+{more}</span>}
     </span>
+  );
+}
+
+/**
+ * Attachments as chips with their file names. Hidden by default, where the paperclip icon
+ * serves. Themes that want them (Clean) show either the inline chip, which stays on the
+ * subject line, or the row of chips, which sits on a line of its own when the theme also
+ * gives rows with attachments the height for it (--thread-list-attachment-row-height).
+ */
+function ThreadAttachmentChips({ thread }: { thread: Thread }) {
+  const files = visibleAttachments(thread);
+  if (!files.length) return null;
+  const names = files.map((f) => f.displayName());
+  const shown = names.slice(0, MAX_ATTACHMENT_CHIPS);
+  return (
+    <>
+      <span className="thread-attachment-inline" title={names.join(', ')}>
+        <AttachmentChip name={names[0]} more={names.length - 1} />
+      </span>
+      <span className="thread-attachment-row">
+        {shown.map((name, i) => (
+          <AttachmentChip key={`${i}-${name}`} name={name} />
+        ))}
+        {names.length > shown.length && (
+          <span className="thread-attachment-more">+{names.length - shown.length}</span>
+        )}
+      </span>
+    </>
   );
 }
 
@@ -180,7 +204,7 @@ const c3 = new ListTabular.Column({
           {getSnippet(thread)}
         </span>
         {attachment}
-        {hasAttachments && <ThreadAttachmentChip messages={messages} />}
+        {hasAttachments && <ThreadAttachmentChips thread={thread} />}
       </span>
     );
   },

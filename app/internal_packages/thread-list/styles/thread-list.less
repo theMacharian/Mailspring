@@ -581,7 +581,206 @@ body.is-blurred {
   display: none;
 }
 
-// Shown instead of the paperclip by themes that want attachment chips (Clean).
-.thread-attachment-chip {
+// Shown instead of the paperclip by themes that want attachment chips (Clean): either the
+// inline chip on the subject line or the row of chips on a line of its own.
+.thread-attachment-inline,
+.thread-attachment-row {
   display: none;
+}
+
+// The strip of conversation actions above an open message (ReaderActionStrip), for themes
+// that ask for it. The injected buttons arrive in groups from several packages; their
+// wrappers are flattened so each button can be placed in the order of the design:
+// Back · Archive, Spam, Delete | Unread, Snooze, Remind | Labels, More · 1 of N ‹ ›
+.strip-icon(@paths) {
+  -webkit-mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none' stroke='black' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'>@{paths}</svg>")
+    center / 20px 20px no-repeat;
+}
+
+// The injected component set sizes itself to 100% height inline.
+.message-list-action-strip {
+  flex: none;
+  height: auto !important;
+}
+
+.reader-action-strip {
+  display: flex;
+  flex: 1;
+  min-width: 0;
+  align-items: center;
+  position: relative;
+  height: 40px;
+  padding: 0 6px;
+  color: @text-color-subtle;
+
+  .reader-strip-actions,
+  .reader-strip-actions > *,
+  .reader-strip-actions .button-group,
+  .reader-strip-actions .key-commands-region {
+    display: contents !important;
+  }
+
+  // Anything a plugin adds lands after More, before the pager.
+  * {
+    order: 40;
+  }
+
+  .btn.btn-toolbar {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: none;
+    width: 36px;
+    height: 36px;
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+    border: none;
+    border-radius: 18px;
+    background: transparent;
+    box-shadow: none;
+    color: inherit;
+
+    &:hover:not(:disabled) {
+      background: fade(@text-color, 8%);
+      color: @text-color;
+    }
+    &:disabled {
+      opacity: 0.38;
+    }
+    img {
+      display: none;
+    }
+    &::before {
+      content: '';
+      width: 20px;
+      height: 20px;
+      background-color: currentColor;
+    }
+  }
+
+  .reader-strip-back {
+    order: 0;
+    .strip-icon("<path d='M16 10H4.5M9.5 5l-5 5 5 5'/>");
+  }
+  .btn-archive {
+    order: 10;
+    &::before {
+      .strip-icon("<rect x='3' y='4' width='14' height='4' rx='1'/><path d='M4.5 8v7.5a1 1 0 0 0 1 1h9a1 1 0 0 0 1-1V8M10 10.5v3.5M8 12.5l2 2 2-2'/>");
+    }
+  }
+  .btn-spam,
+  .btn-not-spam {
+    order: 11;
+  }
+  .btn-spam::before {
+    .strip-icon("<path d='M7 3h6l4 4v6l-4 4H7l-4-4V7z'/><path d='M10 6.5v4.5'/><circle cx='10' cy='13.6' r='0.4'/>");
+  }
+  .btn-not-spam::before {
+    .strip-icon("<path d='M7 3h6l4 4v6l-4 4H7l-4-4V7z'/><path d='M7.2 10.2l2 2 3.6-4'/>");
+  }
+  .btn-trash {
+    order: 12;
+    &::before {
+      .strip-icon("<path d='M3.5 5.5h13M8 5.5V4h4v1.5M5 5.5l.8 10.1a1 1 0 0 0 1 .9h6.4a1 1 0 0 0 1-.9L15 5.5M8.5 8.5v5M11.5 8.5v5'/>");
+    }
+  }
+  .reader-strip-divider-move {
+    order: 15;
+  }
+  .btn-toggle-unread {
+    order: 20;
+    &::before {
+      .strip-icon("<path d='M16.5 10v5a1 1 0 0 1-1 1h-11a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1h7.5'/><path d='M3.8 6l6.2 4.6 2.8-2'/><circle cx='15.5' cy='5' r='2'/>");
+    }
+  }
+  // Already unread: the button marks it read.
+  .btn-toggle-unread[aria-label*='Read']:not([aria-label*='Unread'])::before {
+    .strip-icon("<path d='M3.5 8.5L10 4l6.5 4.5V15a1 1 0 0 1-1 1h-11a1 1 0 0 1-1-1z'/><path d='M3.8 9l6.2 4.5L16.2 9'/>");
+  }
+  .snooze-button {
+    order: 21;
+    &::before {
+      .strip-icon("<circle cx='10' cy='10.5' r='6.5'/><path d='M10 7v3.5l2.5 1.5'/>");
+    }
+  }
+  .send-reminders-toolbar-button {
+    order: 22;
+    &::before {
+      .strip-icon("<path d='M5.5 14V9a4.5 4.5 0 0 1 9 0v5l1.5 1.5h-12z'/><path d='M8.5 17.5h3'/>");
+    }
+    &.has-reminder {
+      color: @component-active-color;
+      &::before {
+        .strip-icon("<path d='M5.5 14V9a4.5 4.5 0 0 1 9 0v5l1.5 1.5h-12z' fill='black'/><path d='M8.5 17.5h3M3 6.5a7 7 0 0 1 2-3M17 6.5a7 7 0 0 0-2-3'/>");
+      }
+    }
+  }
+  .reader-strip-divider-flag {
+    order: 25;
+  }
+  .btn-apply-label,
+  .btn-move-folder {
+    order: 30;
+  }
+  .btn-apply-label::before {
+    .strip-icon("<path d='M3.5 5.5a1 1 0 0 1 1-1h8.3a1 1 0 0 1 .8.4l3.4 5.1-3.4 5.1a1 1 0 0 1-.8.4H4.5a1 1 0 0 1-1-1z'/>");
+  }
+  .btn-move-folder::before {
+    .strip-icon("<path d='M3 6a1 1 0 0 1 1-1h3.6l1.6 1.7H16a1 1 0 0 1 1 1V15a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1z'/><path d='M8 11.5h4.5M10.8 9.8l1.7 1.7-1.7 1.7'/>");
+  }
+  .reader-strip-more {
+    order: 31;
+    &::before {
+      .strip-icon("<circle cx='10' cy='4.5' r='0.6'/><circle cx='10' cy='10' r='0.6'/><circle cx='10' cy='15.5' r='0.6'/>");
+    }
+  }
+  .reader-strip-spacer {
+    order: 50;
+    flex: 1;
+  }
+  .reader-strip-pager {
+    order: 51;
+    margin: 0 4px;
+    font-size: 12px;
+    white-space: nowrap;
+  }
+  .reader-strip-newer {
+    order: 52;
+    &::before {
+      .strip-icon("<path d='M12 5l-5 5 5 5'/>");
+    }
+  }
+  .reader-strip-older {
+    order: 53;
+    &::before {
+      .strip-icon("<path d='M8 5l5 5-5 5'/>");
+    }
+  }
+
+  .reader-strip-divider {
+    flex: none;
+    width: 1px;
+    height: 20px;
+    margin: 0 6px;
+    background: @border-color-divider;
+  }
+
+  // Folded into the More menu. Kept laid out (not display: none) so the popover each
+  // opens has somewhere to point; the strip moves the button under More before clicking.
+  .btn-star,
+  .thread-sharing-button,
+  &:has(.btn-apply-label) .btn-move-folder {
+    position: absolute;
+    visibility: hidden;
+    pointer-events: none;
+  }
+}
+
+[dir='rtl'] .reader-action-strip {
+  .reader-strip-back,
+  .reader-strip-newer,
+  .reader-strip-older {
+    transform: scaleX(-1);
+  }
 }

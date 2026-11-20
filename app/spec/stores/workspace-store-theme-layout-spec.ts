@@ -59,3 +59,15 @@ describe('WorkspaceStore theme preferences', function () {
     expect(AppEnv.config.set).toHaveBeenCalledWith('core.workspace.foldersBesideMessage', true);
   });
 });
+
+describe('WorkspaceStore sheet transitions', function () {
+  it('animates opening and closing sheets by default', function () {
+    spyOn(AppEnv.themes, 'getActiveTheme').andReturn({ sheetTransitions: true });
+    expect(WorkspaceStore.stackChangeAnimates()).toBe(true);
+  });
+
+  it('shows sheets in place for themes that turn the transition off', function () {
+    spyOn(AppEnv.themes, 'getActiveTheme').andReturn({ sheetTransitions: false });
+    expect(WorkspaceStore.stackChangeAnimates()).toBe(false);
+  });
+});

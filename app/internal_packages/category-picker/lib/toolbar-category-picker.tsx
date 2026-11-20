@@ -65,7 +65,7 @@ const MovePicker: React.FC<{ items: Thread[] }> & { containerRequired?: boolean 
           title={localized('Move to Folder')}
           aria-label={localized('Move to Folder')}
           onClick={onOpenMovePopover}
-          className={'btn btn-toolbar btn-category-picker'}
+          className={'btn btn-toolbar btn-category-picker btn-move-folder'}
         >
           <RetinaImg
             name={'toolbar-movetofolder.png'}
@@ -80,7 +80,7 @@ const MovePicker: React.FC<{ items: Thread[] }> & { containerRequired?: boolean 
             title={localized('Apply Label')}
             aria-label={localized('Apply Label')}
             onClick={onOpenLabelsPopover}
-            className={'btn btn-toolbar btn-category-picker'}
+            className={'btn btn-toolbar btn-category-picker btn-apply-label'}
           >
             <RetinaImg
               name={'toolbar-tag.png'}

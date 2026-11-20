@@ -636,6 +636,11 @@ class MessageList extends React.Component<Record<string, unknown>, MessageListSt
             'height-fix': SearchableComponentStore.searchTerm !== null,
           })}
         >
+          <InjectedComponentSet
+            className="message-list-action-strip"
+            matching={{ role: 'MessageListActionStrip' }}
+            exposedProps={{ thread: this.state.currentThread }}
+          />
           <ScrollRegion
             tabIndex={-1}
             className={wrapClass}

@@ -3,18 +3,22 @@ import { CSSTransition, TransitionGroup } from 'react-transition-group';
 import { Rx, FocusedContentStore, Thread } from 'mailspring-exports';
 import ThreadListStore from './thread-list-store';
 import InjectsToolbarButtons, { ToolbarRole } from './injects-toolbar-buttons';
+import { readerActionStripObservable } from './reader-action-strip-theme';
 
 function getObservable() {
   return Rx.Observable.combineLatest(
     Rx.Observable.fromStore(FocusedContentStore),
     ThreadListStore.selectionObservable(),
-    (store, items) => ({
+    readerActionStripObservable(),
+    (store, items, stripEnabled) => ({
       focusedThread: store.focused('thread'),
       items,
+      stripEnabled,
     })
-  ).map(({ focusedThread, items }) => {
+  ).map(({ focusedThread, items, stripEnabled }) => {
     if (focusedThread) {
-      return [focusedThread];
+      // The ReaderActionStrip above the open message holds the actions instead.
+      return stripEnabled ? [] : [focusedThread];
     }
     return items;
   });

@@ -375,6 +375,11 @@ export default class SidebarItem {
       opts.onMarkAllAsRead = onMarkAllAsRead;
     }
     opts.contextMenuLabel = contextMenuLabel;
+    // User labels carry the colour their chips use in the thread list.
+    const [category] = categories;
+    if (opts.hue == null && categories.length === 1 && category && !category.role) {
+      opts.hue = category.hue();
+    }
     return this.forPerspective(id, perspective, opts);
   }
 

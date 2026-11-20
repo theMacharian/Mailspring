@@ -14,7 +14,13 @@ function InjectsToolbarButtons(
   {
     getObservable,
     extraRoles = [],
-  }: { getObservable?: () => Rx.Observable<any>; extraRoles: string[] }
+    extraExposedProps = {},
+  }: {
+    getObservable?: () => Rx.Observable<any>;
+    extraRoles: string[];
+    // Tells buttons where they are, for those that render differently by placement.
+    extraExposedProps?: Record<string, unknown>;
+  }
 ) {
   const roles = [ToolbarRole].concat(extraRoles);
 
@@ -32,6 +38,7 @@ function InjectsToolbarButtons(
         items,
         selection,
         thread: items[0],
+        ...extraExposedProps,
       };
       const injectedButtons = (
         <InjectedComponentSet key="injected" matching={{ roles }} exposedProps={exposedProps} />

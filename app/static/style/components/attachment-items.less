@@ -23,6 +23,10 @@
     }
   }
 
+  .file-icon-preview {
+    display: none;
+  }
+
   .file-thumbnail-preview {
     width: 100%;
     height: 94px;
@@ -87,6 +91,13 @@
       margin-left: auto;
       margin-right: @spacing-three-quarters;
       color: @file-size-color;
+
+      &:not(:empty)::before {
+        content: '(';
+      }
+      &:not(:empty)::after {
+        content: ')';
+      }
     }
   }
 

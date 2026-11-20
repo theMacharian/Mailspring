@@ -42,7 +42,7 @@ export class ArchiveButton extends React.Component<{ items: Thread[] }> {
       <BindGlobalCommands commands={{ 'core:archive-item': () => this._onArchive() }}>
         <button
           tabIndex={-1}
-          className="btn btn-toolbar"
+          className="btn btn-toolbar btn-archive"
           title={localized('Archive')}
           aria-label={localized('Archive')}
           onClick={this._onArchive}
@@ -85,7 +85,7 @@ export class TrashButton extends React.Component<{ items: Thread[] }> {
       <BindGlobalCommands commands={{ 'core:delete-item': () => this._onRemove() }}>
         <button
           tabIndex={-1}
-          className="btn btn-toolbar"
+          className="btn btn-toolbar btn-trash"
           title={localized('Move to Trash')}
           aria-label={localized('Move to Trash')}
           onClick={this._onRemove}
@@ -232,7 +232,7 @@ export class MarkAsSpamButton extends React.Component<{ items: Thread[] }> {
         >
           <button
             tabIndex={-1}
-            className="btn btn-toolbar"
+            className="btn btn-toolbar btn-not-spam"
             title={localized('Not Spam')}
             aria-label={localized('Not Spam')}
             onClick={this._onNotSpam}
@@ -258,7 +258,7 @@ export class MarkAsSpamButton extends React.Component<{ items: Thread[] }> {
       >
         <button
           tabIndex={-1}
-          className="btn btn-toolbar"
+          className="btn btn-toolbar btn-spam"
           title={localized('Mark as Spam')}
           aria-label={localized('Mark as Spam')}
           onClick={this._onMarkAsSpam}
@@ -300,7 +300,7 @@ export class ToggleStarredButton extends React.Component<{ items: Thread[] }> {
       <BindGlobalCommands commands={{ 'core:star-item': () => this._onStar() }}>
         <button
           tabIndex={-1}
-          className="btn btn-toolbar"
+          className="btn btn-toolbar btn-star"
           title={title}
           aria-label={title}
           onClick={this._onStar}
@@ -351,7 +351,7 @@ export class ToggleUnreadButton extends React.Component<{ items: Thread[] }> {
       >
         <button
           tabIndex={-1}
-          className="btn btn-toolbar"
+          className="btn btn-toolbar btn-toggle-unread"
           title={label}
           aria-label={label}
           onClick={this._onClick}
